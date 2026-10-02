@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayStore Intelligence — BI Dashboard</title>
+  <meta name="description" content="Professional Google Play Store Data Mining and Business Intelligence Dashboard with real-time analytics and ML insights." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <span class="brand-name sidebar-text">PlayStore<strong>IQ</strong></span>
+    </div>
+
+    <nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
+      <a href="#section-overview"    class="nav-item active" data-section="overview"   aria-label="Overview">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+        <span class="nav-label sidebar-text">Overview</span>
+      </a>
+      <a href="#section-categories"  class="nav-item" data-section="categories"        aria-label="Categories">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+        <span class="nav-label sidebar-text">Categories</span>
+      </a>
+      <a href="#section-ratings"     class="nav-item" data-section="ratings"           aria-label="Ratings and Reviews">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span class="nav-label sidebar-text">Ratings &amp; Reviews</span>
+      </a>
+      <a href="#section-pricing"     class="nav-item" data-section="pricing"           aria-label="Pricing">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+        <span class="nav-label sidebar-text">Pricing</span>
+      </a>
+      <a href="#section-sentiment"   class="nav-item" data-section="sentiment"         aria-label="Sentiment Analysis">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <span class="nav-label sidebar-text">Sentiment</span>
+      </a>
+      <a href="#section-clusters"    class="nav-item" data-section="clusters"          aria-label="Clusters and Insights">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><circle cx="12" cy="5" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="12" cy="19" r="1"/><circle cx="5" cy="12" r="1"/><line x1="12" y1="7" x2="12" y2="10"/><line x1="14" y1="12" x2="17" y2="12"/><line x1="12" y1="14" x2="12" y2="17"/><line x1="7" y1="12" x2="10" y2="12"/></svg></span>
+        <span class="nav-label sidebar-text">Clusters &amp; Insights</span>
+      </a>
+      <a href="#section-explorer"    class="nav-item" data-section="explorer"          aria-label="Data Explorer">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span>
+        <span class="nav-label sidebar-text">Data Explorer</span>
+      </a>
+    </nav>
+
+    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Collapse sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN WRAPPER
+  ══════════════════════════════════════════════ -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOP BAR -->
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div>
+          <h1 class="page-title" id="pageTitle">Overview</h1>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="search-box" role="search">
+          <span class="search-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+          <input type="text" id="globalSearch" placeholder="Search apps…" class="search-input" autocomplete="off" aria-label="Search apps" />
+          <kbd class="search-kbd">⌘K</kbd>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="date-range-group" role="group" aria-label="Time range">
+          <button class="dr-btn" data-val="1">1M</button>
+          <button class="dr-btn" data-val="3">3M</button>
+          <button class="dr-btn" data-val="6">6M</button>
+          <button class="dr-btn active" data-val="12">12M</button>
+          <button class="dr-btn" data-val="all">All</button>
+          <button class="dr-btn dr-custom" data-val="custom">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Custom
+          </button>
+          <select id="monthDrillDownSelect" class="month-drill-select" aria-label="Monthly Drill-Down">
+            <option value="">Drill down month…</option>
+          </select>
+        </div>
+        <!-- Custom date picker popover -->
+        <div class="date-popover hidden" id="datePopover">
+          <label class="dp-label">From</label>
+          <input type="date" id="dateStart" class="dp-input" />
+          <label class="dp-label">To</label>
+          <input type="date" id="dateEnd" class="dp-input" />
+          <button class="dp-apply btn-primary-sm" id="applyCustomDate">Apply</button>
+        </div>
+        <div class="divider-v"></div>
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="export-btn btn-outline" id="exportBtn" aria-label="Export filtered data to CSV">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <!-- Connection status -->
+        <div class="conn-status" id="connStatus" title="API connection status">
+          <span class="conn-dot" id="connDot"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- FILTER BAR -->
+    <div class="filterbar" id="filterbar">
+      <div class="filter-chips-row" id="filterChipsRow">
+        <!-- Category chip -->
+        <div class="filter-chip-group">
+          <button class="filter-chip-trigger" id="catChipTrigger" aria-haspopup="listbox" aria-expanded="false">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span class="chip-label-text">Category</span>
+            <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="chip-dropdown" id="catDropdown" role="listbox" aria-multiselectable="true">
+            <div class="chip-search-wrap">
+              <input type="text" class="chip-search" id="catSearch" placeholder="Search category…" aria-label="Search categories" />
+            </div>
+            <div class="chip-options" id="catOptions"></div>
+          </div>
+        </div>
+
+        <!-- Type chip -->
+        <div class="filter-chip-group">
+          <button class="filter-chip-trigger" id="typeChipTrigger">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            <span class="chip-label-text">Type</span>
+            <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="chip-dropdown" id="typeDropdown">
+            <div class="chip-option" data-val="" role="option">All Types</div>
+            <div class="chip-option" data-val="free" role="option">Free</div>
+            <div class="chip-option" data-val="paid" role="option">Paid</div>
+          </div>
+        </div>
+
+        <!-- Content Rating chip -->
+        <div class="filter-chip-group">
+          <button class="filter-chip-trigger" id="crChipTrigger">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span class="chip-label-text">Content Rating</span>
+            <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="chip-dropdown" id="crDropdown">
+            <div class="chip-options" id="crOptions"></div>
+          </div>
+        </div>
+
+        <!-- Rating slider chip -->
+        <div class="filter-chip-group">
+          <button class="filter-chip-trigger" id="ratingChipTrigger">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span class="chip-label-text">Rating</span>
+            <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="chip-dropdown chip-dropdown--wide" id="ratingDropdown">
+            <p class="chip-label">Minimum Rating: <strong id="ratingRangeDisplay">1.0 ★ & above</strong></p>
+            <div class="single-range-wrap" id="ratingSliderWrap">
+              <div class="single-range-track"></div>
+              <div class="single-range-progress" id="ratingProgress"></div>
+              <input type="range" id="ratingMin" min="1.0" max="5.0" step="0.1" value="1.0" class="single-range" aria-label="Minimum rating" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Android Version chip -->
+        <div class="filter-chip-group">
+          <button class="filter-chip-trigger" id="avChipTrigger">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65-5.66 5.66a1 1 0 0 1-1.41-1.41L13.69 11H2.05A10 10 0 1 0 12 2z"/></svg>
+            <span class="chip-label-text">Android Ver</span>
+            <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="chip-dropdown chip-dropdown--scroll" id="avDropdown">
+            <div class="chip-options" id="avOptions"></div>
+          </div>
+        </div>
+
+        <div class="filterbar-divider"></div>
+
+        <!-- Active filter chips -->
+        <div class="active-chips" id="activeChips"></div>
+
+        <!-- Reset link -->
+        <button class="reset-link hidden" id="resetBtn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.15"/></svg>
+          Reset filters
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════
+         CONTENT
+    ═══════════════════════════ -->
+    <main class="content" id="mainContent" role="main">
+
+      <!-- ─────────── SECTION: OVERVIEW ─────────── -->
+      <section id="section-overview" class="content-section">
+
+        <!-- KPI TILES -->
+        <div class="kpi-grid" id="kpiGrid" role="region" aria-label="Key performance indicators">
+          <!-- injected by JS -->
+          <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+          <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+          <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+          <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+          <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+          <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+        </div>
+
+        <!-- Row 2: area line + donut -->
+        <div class="grid-2-1">
+          <div class="card" id="cardUpdatedMonth">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Apps Updated Over Time</h3>
+                <p class="card-subtitle">Monthly update activity across the dataset</p>
+              </div>
+            </div>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skUpdatedMonth"></div>
+              <canvas id="updatedMonthChart" class="hidden"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Free vs Paid</h3>
+                <p class="card-subtitle">Distribution by app type</p>
+              </div>
+            </div>
+            <div class="card-body chart-donut-wrap">
+              <div class="skeleton-chart" id="skFreePaid"></div>
+              <canvas id="freePaidChart" class="hidden"></canvas>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ─────────── SECTION: CATEGORIES ─────────── -->
+      <section id="section-categories" class="content-section">
+        <div class="section-heading">
+          <h2 class="section-title">Categories</h2>
+          <p class="section-desc">Distribution, installs, and ratings by app category</p>
+        </div>
+        <div class="grid-2-col">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Apps per Category</h3>
+                <p class="card-subtitle">Click a bar to filter by category</p>
+              </div>
+            </div>
+            <div class="card-body chart-tall">
+              <div class="skeleton-chart" id="skAppsPerCat"></div>
+              <canvas id="appsPerCatChart" class="hidden"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Total Installs by Category</h3>
+                <p class="card-subtitle">Aggregate install counts</p>
+              </div>
+            </div>
+            <div class="card-body chart-tall">
+              <div class="skeleton-chart" id="skInstallsByCat"></div>
+              <canvas id="installsByCatChart" class="hidden"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Heatmap -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Category × Rating Heatmap</h3>
+              <p class="card-subtitle">App count at each rating bucket, per category</p>
+            </div>
+          </div>
+          <div class="card-body heatmap-wrap" id="heatmapWrap">
+            <div class="skeleton-chart" id="skHeatmap"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── SECTION: RATINGS & REVIEWS ─────────── -->
+      <section id="section-ratings" class="content-section">
+        <div class="section-heading">
+          <h2 class="section-title">Ratings &amp; Reviews</h2>
+          <p class="section-desc">Rating distributions, content classifications, and platform requirements</p>
+        </div>
+        <div class="grid-3-col">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Rating Distribution</h3></div>
+            <div class="card-body">
+              <div class="skeleton-chart" id="skRatingDist"></div>
+              <canvas id="ratingDistChart" class="hidden"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Content Rating Share</h3></div>
+            <div class="card-body chart-donut-wrap">
+              <div class="skeleton-chart" id="skContentRating"></div>
+              <canvas id="contentRatingChart" class="hidden"></canvas>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Android Version Distribution</h3></div>
+            <div class="card-body">
+              <div class="skeleton-chart" id="skAndroidVer"></div>
+              <canvas id="androidVerChart" class="hidden"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Reviews vs Installs scatter -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Reviews vs Installs</h3>
+              <p class="card-subtitle">Correlation by category (log scale)</p>
+            </div>
+          </div>
+          <div class="card-body chart-area">
+            <div class="skeleton-chart" id="skReviewsInstalls"></div>
+            <canvas id="reviewsInstallsChart" class="hidden"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── SECTION: PRICING ─────────── -->
+      <section id="section-pricing" class="content-section">
+        <div class="section-heading">
+          <h2 class="section-title">Pricing</h2>
+          <p class="section-desc">How paid app pricing relates to quality and market success</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Price vs Rating — Paid Apps</h3>
+              <p class="card-subtitle">Scatter of all paid apps with rating on X axis</p>
+            </div>
+          </div>
+          <div class="card-body chart-area">
+            <div class="skeleton-chart" id="skPriceRating"></div>
+            <canvas id="priceRatingChart" class="hidden"></canvas>
+          </div>
+        </div>
+        <!-- Top 10 table -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Top 10 Apps by Installs</h3>
+              <p class="card-subtitle">Click column headers to sort</p>
+            </div>
+            <div class="card-actions">
+              <span class="table-count" id="tableCount"></span>
+            </div>
+          </div>
+          <div class="card-body table-wrap">
+            <div class="skeleton-chart" id="skTable"></div>
+            <div id="top10TableWrap" class="hidden">
+              <table class="data-table" id="top10Table" role="grid" aria-label="Top 10 apps by installs">
+                <thead>
+                  <tr>
+                    <th class="th-sortable" data-col="App">App <span class="sort-icon">↕</span></th>
+                    <th class="th-sortable" data-col="Category">Category <span class="sort-icon">↕</span></th>
+                    <th class="th-sortable th-num" data-col="Installs">Installs <span class="sort-icon">↕</span></th>
+                    <th class="th-sortable th-num" data-col="Rating">Rating <span class="sort-icon">↕</span></th>
+                    <th class="th-right">Type</th>
+                  </tr>
+                </thead>
+                <tbody id="top10Body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── SECTION: SENTIMENT ─────────── -->
+      <section id="section-sentiment" class="content-section">
+        <div class="section-heading">
+          <h2 class="section-title">Sentiment Analysis</h2>
+          <p class="section-desc">User review sentiment from <span id="reviewCount">—</span> reviews</p>
+        </div>
+        <div class="grid-3-col">
+          <div class="card">
+            <div class="card-header"><h3 class="card-title">Overall Sentiment</h3></div>
+            <div class="card-body chart-donut-wrap">
+              <div class="skeleton-chart" id="skSentimentDonut"></div>
+              <canvas id="sentimentDonut" class="hidden"></canvas>
+            </div>
+            <div class="sentiment-stats" id="sentimentStats"></div>
+          </div>
+          <div class="card col-span-2">
+            <div class="card-header"><h3 class="card-title">Sentiment by Category</h3></div>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skSentByCat"></div>
+              <canvas id="sentByCatChart" class="hidden"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Word cloud -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Top Keywords</h3>
+              <p class="card-subtitle">Most frequent words in user reviews</p>
+            </div>
+          </div>
+          <div class="wordcloud-wrap" id="wordcloudWrap">
+            <div class="skeleton-chart" id="skWordcloud"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── SECTION: CLUSTERS & INSIGHTS ─────────── -->
+      <section id="section-clusters" class="content-section">
+        <div class="section-heading">
+          <h2 class="section-title">Clusters &amp; Insights</h2>
+          <p class="section-desc">K-Means segmentation and ML-powered findings</p>
+        </div>
+        <div class="grid-2-1">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">K-Means Clusters</h3>
+                <p class="card-subtitle">5 segments: Rating vs Installs (log scale)</p>
+              </div>
+            </div>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skCluster"></div>
+              <canvas id="clusterChart" class="hidden"></canvas>
+            </div>
+            <div class="cluster-legend" id="clusterLegend"></div>
+          </div>
+          <div class="stacked-cards">
+            <!-- Auto Insights card -->
+            <div class="card insights-card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Auto Insights</h3>
+                  <p class="card-subtitle">AI-generated findings</p>
+                </div>
+                <button class="icon-btn" id="refreshInsights" aria-label="Refresh insights">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.15"/></svg>
+                </button>
+              </div>
+              <div class="insights-list" id="insightsList">
+                <div class="skeleton-block h-4 w-full mb-2"></div>
+                <div class="skeleton-block h-4 w-5/6 mb-2"></div>
+                <div class="skeleton-block h-4 w-4/6"></div>
+              </div>
+            </div>
+            <!-- ML Model card -->
+            <div class="card">
+              <div class="card-header"><h3 class="card-title">Predictive Model</h3></div>
+              <div class="card-body">
+                <div class="skeleton-chart" id="skML"></div>
+                <canvas id="featureImportChart" class="hidden" style="max-height:160px"></canvas>
+                <div class="ml-badges hidden" id="mlBadges"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Association insights -->
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Association Insights</h3></div>
+          <div class="assoc-grid" id="assocGrid">
+            <div class="skeleton-block h-20 w-full"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────── SECTION: DATA EXPLORER ─────────── -->
+      <section id="section-explorer" class="content-section">
+        <div class="section-heading">
+          <h2 class="section-title">Data Explorer</h2>
+          <p class="section-desc">Browse all filtered apps with full details</p>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">App Dataset</h3>
+              <p class="card-subtitle" id="explorerCount">Showing all matching apps</p>
+            </div>
+            <button class="btn-outline" id="explorerExportBtn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export
+            </button>
+          </div>
+          <div class="card-body table-wrap">
+            <div class="skeleton-chart" id="skExplorer"></div>
+            <table class="data-table hidden" id="explorerTable" aria-label="App data explorer">
+              <thead>
+                <tr>
+                  <th>App</th>
+                  <th>Category</th>
+                  <th class="th-num">Rating</th>
+                  <th class="th-num">Installs</th>
+                  <th class="th-right">Type</th>
+                  <th class="th-num">Price</th>
+                  <th>Last Updated</th>
+                </tr>
+              </thead>
+              <tbody id="explorerBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main><!-- /content -->
+  </div><!-- /main-wrapper -->
+
+  <!-- EMPTY STATE OVERLAY -->
+  <div class="empty-state hidden" id="emptyState">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted)"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <p class="empty-title">No apps match your filters</p>
+    <p class="empty-body">Try adjusting or resetting your filters to see more results.</p>
+    <button class="btn-primary" onclick="document.getElementById('resetBtn').click()">Reset filters</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
