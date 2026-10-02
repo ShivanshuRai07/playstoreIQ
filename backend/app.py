@@ -16,15 +16,18 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import nltk
+import tempfile
+
+nltk_dir = os.path.join(tempfile.gettempdir(), "nltk_data")
+os.makedirs(nltk_dir, exist_ok=True)
+if nltk_dir not in nltk.data.path:
+    nltk.data.path.append(nltk_dir)
 
 try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt", quiet=True)
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords", quiet=True)
+    nltk.download("punkt", download_dir=nltk_dir, quiet=True)
+    nltk.download("stopwords", download_dir=nltk_dir, quiet=True)
+except Exception:
+    pass
 
 from nltk.corpus import stopwords
 
@@ -32,10 +35,12 @@ from nltk.corpus import stopwords
 app = Flask(__name__)
 CORS(app)
 
-BASE_DIR   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR   = os.path.join(BASE_DIR, "data")
-APPS_CSV   = os.path.join(DATA_DIR, "googleplaystore.csv")
-REVS_CSV   = os.path.join(DATA_DIR, "googleplaystore_user_reviews.csv")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if not os.path.exists(os.path.join(BASE_DIR, "data")):
+    BASE_DIR = os.getcwd()
+DATA_DIR = os.path.join(BASE_DIR, "data")
+APPS_CSV = os.path.join(DATA_DIR, "googleplaystore.csv")
+REVS_CSV = os.path.join(DATA_DIR, "googleplaystore_user_reviews.csv")
 
 # ── Data loading & cleaning ──────────────────────────────────────────────────
 def load_and_clean():
