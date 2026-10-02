@@ -124,10 +124,35 @@ def get_reviews_df():
             _REVIEWS_CACHE = pd.DataFrame(columns=["App", "Translated_Review", "Sentiment"])
     return _REVIEWS_CACHE
 
-print("Loading apps data…")
-APPS_DF = load_and_clean()
-MAX_DATE = APPS_DF["Last Updated"].max()
-print(f"Loaded {len(APPS_DF)} apps. Max date: {MAX_DATE}")
+APPS_DF = pd.DataFrame()
+MAX_DATE = pd.Timestamp.now()
+
+try:
+    print("Loading apps data…")
+    APPS_DF = load_and_clean()
+    if not APPS_DF.empty and "Last Updated" in APPS_DF:
+        MAX_DATE = APPS_DF["Last Updated"].max()
+    print(f"Loaded {len(APPS_DF)} apps. Max date: {MAX_DATE}")
+except Exception as e:
+    print(f"Startup warning: {e}")
+
+@app.route("/api/health")
+def health():
+    return jsonify({"status": "ok", "apps": len(APPS_DF)})
+
+@app.route("/api/debug")
+def debug():
+    files_info = {}
+    for p in [".", "..", "data", "api", "api/data"]:
+        files_info[p] = os.listdir(p) if os.path.exists(p) else "NOT_FOUND"
+    return jsonify({
+        "status": "ok",
+        "cwd": os.getcwd(),
+        "apps_csv_path": APPS_CSV,
+        "apps_csv_exists": os.path.exists(APPS_CSV),
+        "apps_loaded": len(APPS_DF),
+        "paths": files_info
+    })
 
 # ── Filter helper ────────────────────────────────────────────────────────────
 def apply_filters(df, args):
