@@ -103,7 +103,7 @@ def load_and_clean():
     df["Rating"] = pd.to_numeric(df["Rating"], errors="coerce")
 
     # Last Updated → datetime
-    df["Last Updated"] = pd.to_datetime(df["Last Updated"], errors="coerce", infer_datetime_format=True)
+    df["Last Updated"] = pd.to_datetime(df["Last Updated"], errors="coerce")
 
     # Derived columns
     df["IsFree"] = df["Type"].str.strip().str.lower() == "free"
@@ -126,6 +126,7 @@ def get_reviews_df():
 
 APPS_DF = pd.DataFrame()
 MAX_DATE = pd.Timestamp.now()
+STARTUP_ERROR = None
 
 try:
     print("Loading apps data…")
@@ -134,7 +135,9 @@ try:
         MAX_DATE = APPS_DF["Last Updated"].max()
     print(f"Loaded {len(APPS_DF)} apps. Max date: {MAX_DATE}")
 except Exception as e:
-    print(f"Startup warning: {e}")
+    import traceback
+    STARTUP_ERROR = traceback.format_exc()
+    print(f"Startup warning: {STARTUP_ERROR}")
 
 @app.route("/api/health")
 def health():
@@ -151,6 +154,7 @@ def debug():
         "apps_csv_path": APPS_CSV,
         "apps_csv_exists": os.path.exists(APPS_CSV),
         "apps_loaded": len(APPS_DF),
+        "startup_error": STARTUP_ERROR,
         "paths": files_info
     })
 
