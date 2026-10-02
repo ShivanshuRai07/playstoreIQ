@@ -9,12 +9,26 @@ import pandas as pd
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 
-# ── ML imports ──────────────────────────────────────────────────────────────
-from sklearn.cluster import KMeans
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+# Pure NumPy K-Means (Zero heavy C-compiled dependencies for fast serverless execution)
+def simple_kmeans(X, n_clusters=5, max_iter=20):
+    np.random.seed(42)
+    n = len(X)
+    if n <= n_clusters:
+        return np.arange(n)
+    idx = np.random.choice(n, n_clusters, replace=False)
+    centroids = X[idx].copy()
+    labels = np.zeros(n, dtype=int)
+    for _ in range(max_iter):
+        dists = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+        new_labels = np.argmin(dists, axis=1)
+        if np.array_equal(labels, new_labels):
+            break
+        labels = new_labels
+        for k in range(n_clusters):
+            pts = X[labels == k]
+            if len(pts) > 0:
+                centroids[k] = pts.mean(axis=0)
+    return labels
 # Stopwords for sentiment word cloud (no external NLTK downloads needed)
 STOPWORDS = {
     "a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because",
@@ -420,16 +434,20 @@ def clustering():
     df = apply_filters(APPS_DF, request.args)
     features = ["Rating", "Installs", "Reviews", "Size", "Price"]
     sub = df[features + ["App", "Category"]].dropna(subset=["Rating"])
+    if sub.empty:
+        return jsonify({"points": [], "clusterLabels": {}})
     sub = sub.copy()
-    sub["Size"] = sub["Size"].fillna(sub["Size"].median())
+    sub["Size"] = sub["Size"].fillna(sub["Size"].median() if not sub["Size"].dropna().empty else 10.0)
 
-    scaler = StandardScaler()
-    X = scaler.fit_transform(sub[features])
+    # Standard scale features with NumPy
+    raw_X = sub[features].values.astype(float)
+    mean = np.nanmean(raw_X, axis=0)
+    std = np.nanstd(raw_X, axis=0)
+    std[std == 0] = 1.0
+    X_scaled = np.nan_to_num((raw_X - mean) / std)
 
     n_clusters = min(5, len(sub))
-    km = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-    sub = sub.copy()
-    sub["Cluster"] = km.fit_predict(X).astype(str)
+    sub["Cluster"] = simple_kmeans(X_scaled, n_clusters=n_clusters).astype(str)
 
     # Sample for response size
     sample = sub.sample(min(500, len(sub)), random_state=42)
