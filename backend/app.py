@@ -15,32 +15,41 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-import nltk
-import tempfile
-
-nltk_dir = os.path.join(tempfile.gettempdir(), "nltk_data")
-os.makedirs(nltk_dir, exist_ok=True)
-if nltk_dir not in nltk.data.path:
-    nltk.data.path.append(nltk_dir)
-
-try:
-    nltk.download("punkt", download_dir=nltk_dir, quiet=True)
-    nltk.download("stopwords", download_dir=nltk_dir, quiet=True)
-except Exception:
-    pass
-
-from nltk.corpus import stopwords
+# Stopwords for sentiment word cloud (no external NLTK downloads needed)
+STOPWORDS = {
+    "a","about","above","after","again","against","all","am","an","and","any","are","aren't","as","at","be","because",
+    "been","before","being","below","between","both","but","by","can't","cannot","could","couldn't","did","didn't","do",
+    "does","doesn't","doing","don't","down","during","each","few","for","from","further","had","hadn't","has","hasn't",
+    "have","haven't","having","he","he'd","he'll","he's","her","here","here's","hers","herself","him","himself","his",
+    "how","how's","i","i'd","i'll","i'm","i've","if","in","into","is","isn't","it","it's","its","itself","let's","me",
+    "more","most","mustn't","my","myself","no","nor","not","of","off","on","once","only","or","other","ought","our",
+    "ours","ourselves","out","over","own","same","shan't","she","she'd","she'll","she's","should","shouldn't","so","some",
+    "such","than","that","that's","the","their","theirs","them","themselves","then","there","there's","these","they",
+    "they'd","they'll","they're","they've","this","those","through","to","too","under","until","up","very","was","wasn't",
+    "we","we'd","we'll","we're","we've","were","weren't","what","what's","when","when's","where","where's","which","while",
+    "who","who's","whom","why","why's","with","won't","would","wouldn't","you","you'd","you'll","you're","you've","your",
+    "yours","yourself","yourselves","app","apps","game","like","good","great","really","time","it's","dont","im"
+}
 
 # ── App setup ────────────────────────────────────────────────────────────────
 app = Flask(__name__)
 CORS(app)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if not os.path.exists(os.path.join(BASE_DIR, "data")):
-    BASE_DIR = os.getcwd()
-DATA_DIR = os.path.join(BASE_DIR, "data")
-APPS_CSV = os.path.join(DATA_DIR, "googleplaystore.csv")
-REVS_CSV = os.path.join(DATA_DIR, "googleplaystore_user_reviews.csv")
+def find_data_file(filename):
+    candidates = [
+        os.path.join(os.path.dirname(__file__), "data", filename),
+        os.path.join(os.path.dirname(__file__), "..", "data", filename),
+        os.path.join(os.getcwd(), "data", filename),
+        os.path.join(os.getcwd(), "api", "data", filename),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), filename),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return os.path.abspath(c)
+    return filename
+
+APPS_CSV = find_data_file("googleplaystore.csv")
+REVS_CSV = find_data_file("googleplaystore_user_reviews.csv")
 
 # ── Data loading & cleaning ──────────────────────────────────────────────────
 def load_and_clean():
@@ -87,17 +96,24 @@ def load_and_clean():
 
     return df
 
-def load_reviews():
-    df = pd.read_csv(REVS_CSV)
-    df = df.dropna(subset=["Translated_Review", "Sentiment"])
-    df["Sentiment"] = df["Sentiment"].str.strip()
-    return df
+_REVIEWS_CACHE = None
+def get_reviews_df():
+    global _REVIEWS_CACHE
+    if _REVIEWS_CACHE is None:
+        try:
+            df = pd.read_csv(REVS_CSV, nrows=50000)
+            df = df.dropna(subset=["Translated_Review", "Sentiment"])
+            df["Sentiment"] = df["Sentiment"].str.strip()
+            _REVIEWS_CACHE = df
+        except Exception as e:
+            print(f"Error loading reviews: {e}")
+            _REVIEWS_CACHE = pd.DataFrame(columns=["App", "Translated_Review", "Sentiment"])
+    return _REVIEWS_CACHE
 
-print("Loading data…")
-APPS_DF   = load_and_clean()
-REVIEWS_DF = load_reviews()
-MAX_DATE   = APPS_DF["Last Updated"].max()
-print(f"Loaded {len(APPS_DF)} apps, {len(REVIEWS_DF)} reviews. Max date: {MAX_DATE}")
+print("Loading apps data…")
+APPS_DF = load_and_clean()
+MAX_DATE = APPS_DF["Last Updated"].max()
+print(f"Loaded {len(APPS_DF)} apps. Max date: {MAX_DATE}")
 
 # ── Filter helper ────────────────────────────────────────────────────────────
 def apply_filters(df, args):
@@ -362,7 +378,8 @@ def category_rating_heatmap():
 def sentiment():
     df  = apply_filters(APPS_DF, request.args)
     apps_in_filter = df["App"].unique()
-    rev = REVIEWS_DF[REVIEWS_DF["App"].isin(apps_in_filter)]
+    rev_df = get_reviews_df()
+    rev = rev_df[rev_df["App"].isin(apps_in_filter)]
 
     # Per category: join on App → Category
     merged = rev.merge(df[["App", "Category"]], on="App", how="left")
@@ -378,7 +395,7 @@ def sentiment():
 
     # Word cloud words
     all_text = " ".join(rev["Translated_Review"].dropna().tolist()).lower()
-    stop_words = set(stopwords.words("english")) | {"app", "apps", "it", "this", "the", "is", "it's"}
+    stop_words = STOPWORDS
     words = re.findall(r"\b[a-z]{4,}\b", all_text)
     word_freq = {}
     for w in words:
