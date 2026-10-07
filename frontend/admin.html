@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayStoreIQ — Administrator Console &amp; ML Lab</title>
+  <meta name="description" content="Exclusive administrator suite for ML model benchmarking, on-demand retraining, and live CSV dataset editing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .admin-topbar-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-crown-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+    .btn-admin-logout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-admin-logout:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #b91c1c;
+    }
+    .nav-user-switch-link {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+    .nav-user-switch-link a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+    }
+    .nav-user-switch-link a:hover {
+      background: rgba(56, 189, 248, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       ADMIN SIDEBAR
+  ══════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+        <span style="font-size:16px;">👑</span>
+      </div>
+      <span class="brand-name sidebar-text">PlayStore<strong>Admin</strong></span>
+    </div>
+
+    <nav class="sidebar-nav" role="navigation" aria-label="Admin navigation">
+      <a href="javascript:void(0)" class="nav-item active" id="sideNavML" onclick="switchAdminTab('ml')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></span>
+        <span class="nav-label sidebar-text">🤖 ML Algorithm Lab</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavDataset" onclick="switchAdminTab('dataset')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+        <span class="nav-label sidebar-text">📝 Live Dataset Editor</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavDiag" onclick="switchAdminTab('diag')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span class="nav-label sidebar-text">📊 System Diagnostics</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavUsers" onclick="switchAdminTab('users')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <span class="nav-label sidebar-text">👥 Users &amp; Permissions</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavUpload" onclick="switchAdminTab('upload')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
+        <span class="nav-label sidebar-text">📤 Replace Dataset (CSV)</span>
+      </a>
+
+      <!-- Quick Switch to User Analytics -->
+      <div class="nav-user-switch-link">
+        <a href="/user.html" title="Open user analytics view">
+          <span>📊 View User Analytics ↗</span>
+        </a>
+      </div>
+    </nav>
+
+    <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Collapse sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN CONTENT WRAPPER
+  ══════════════════════════════════════════════ -->
+  <div class="main-wrapper" id="mainWrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div>
+          <h1 class="page-title" id="pageTitle">Admin Console &amp; ML Lab</h1>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- Direct CSV Download -->
+        <button type="button" class="btn-primary-sm" onclick="downloadDatasetCsv()" style="background: linear-gradient(135deg, #10b981, #059669); border:none">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export Dataset CSV
+        </button>
+
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+          <svg class="icon-sun hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+
+        <!-- Admin Profile Pill & Direct Logout -->
+        <div class="admin-topbar-profile">
+          <div class="admin-crown-pill">
+            <span>👑</span>
+            <span id="adminNameLabel">Administrator</span>
+          </div>
+          <button type="button" class="btn-admin-logout" onclick="handleLogout()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <main class="content" id="mainContent" role="main">
+
+      <!-- Section Heading -->
+      <div class="section-heading admin-section-header mb-4">
+        <div class="admin-badge-pill">👑 Administrator Command Center</div>
+        <h2 class="section-title">Admin Console &amp; Machine Learning Lab</h2>
+        <p class="section-desc">Exclusive administrator suite for multi-model algorithm evaluation, live dataset in-place editing, and system controls</p>
+      </div>
+
+      <!-- Admin Tab Buttons -->
+      <div class="admin-tab-nav" role="tablist">
+        <button type="button" class="admin-tab-btn active" id="tabAdmML" onclick="switchAdminTab('ml')">
+          🤖 ML Algorithm Lab
+        </button>
+        <button type="button" class="admin-tab-btn" id="tabAdmDataset" onclick="switchAdminTab('dataset')">
+          📝 Live Dataset Editor
+        </button>
+        <button type="button" class="admin-tab-btn" id="tabAdmDiag" onclick="switchAdminTab('diag')">
+          📊 System Diagnostics
+        </button>
+        <button type="button" class="admin-tab-btn" id="tabAdmUsers" onclick="switchAdminTab('users')">
+          👥 Users &amp; Permissions
+        </button>
+        <button type="button" class="admin-tab-btn" id="tabAdmUpload" onclick="switchAdminTab('upload')">
+          📤 Replace Dataset (CSV)
+        </button>
+      </div>
+
+      <!-- ── TAB PANE 1: ML ALGORITHM LAB ── -->
+      <div class="admin-pane" id="paneAdmML">
+        <!-- Model Retraining Toolbar -->
+        <div class="admin-ml-toolbar mb-4">
+          <div class="admin-ml-info">
+            <span class="admin-ml-badge">⚡ On-Demand Retraining</span>
+            <span class="admin-ml-text">Train all 6 classifiers with custom test/train splits directly on active dataset.</span>
+          </div>
+          <div class="admin-ml-actions">
+            <select id="retrainTestSplit" class="admin-select" aria-label="Test Split">
+              <option value="0.2">80% Train / 20% Test (Standard)</option>
+              <option value="0.3">70% Train / 30% Test</option>
+              <option value="0.1">90% Train / 10% Test</option>
+              <option value="0.4">60% Train / 40% Test</option>
+            </select>
+            <button class="btn-primary-sm" id="retrainBtn" onclick="triggerAdminRetrain()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Retrain 6 Models
+            </button>
+          </div>
+        </div>
+
+        <!-- Best Algo Banner -->
+        <div class="best-algo-banner hidden" id="bestAlgoBanner">
+          <div class="best-algo-crown">🏆</div>
+          <div class="best-algo-text">
+            <span class="best-algo-title">Best Algorithm: <strong id="bestAlgoName">—</strong></span>
+            <span class="best-algo-tip" id="bestAlgoTip"></span>
+          </div>
+          <div class="best-algo-badge" id="bestAlgoBadge">—%</div>
+        </div>
+
+        <!-- Accuracy Comparison Chart -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Accuracy Comparison Across 6 Classifiers</h3>
+              <p class="card-subtitle">Random Forest · Gradient Boosting · Decision Tree · Logistic Regression · KNN · Naive Bayes</p>
+            </div>
+            <div class="card-actions">
+              <div class="ml-meta hidden" id="mlMeta"></div>
+            </div>
+          </div>
+          <div class="card-body chart-area">
+            <div class="skeleton-chart" id="skMlCompare"></div>
+            <canvas id="mlCompareChart" class="hidden"></canvas>
+          </div>
+        </div>
+
+        <!-- Multi-Metric Radar Scorecard -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Multi-Metric Scorecard</h3>
+              <p class="card-subtitle">Precision · Recall · F1 · AUC per algorithm on test partition</p>
+            </div>
+          </div>
+          <div class="card-body chart-area">
+            <div class="skeleton-chart" id="skMlRadar"></div>
+            <canvas id="mlRadarChart" class="hidden"></canvas>
+          </div>
+        </div>
+
+        <!-- Algorithm Cards Grid -->
+        <div class="algo-cards-grid mb-4" id="algoCardsGrid">
+          <div class="skeleton-block h-40 w-full"></div>
+        </div>
+
+        <!-- Feature Importance Chart -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Feature Importance <span id="fiAlgoName" class="fi-algo-badge"></span></h3>
+              <p class="card-subtitle">Key feature weights driving the champion algorithm's predictions</p>
+            </div>
+          </div>
+          <div class="card-body chart-area">
+            <div class="skeleton-chart" id="skFeatImp"></div>
+            <canvas id="featImpChart" class="hidden"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB PANE 2: LIVE DATASET IN-PLACE EDITOR ── -->
+      <div class="admin-pane hidden" id="paneAdmDataset">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">📝 Dataset Manager &amp; Record Editor</h3>
+              <p class="card-subtitle">Add new apps, edit fields (ratings, reviews, price, category), delete records, or reset to original Kaggle 2018 dataset</p>
+            </div>
+            <div class="ds-header-actions">
+              <button type="button" class="btn-primary-sm" onclick="openAddAppModal()">
+                ➕ Add New App
+              </button>
+              <button type="button" class="btn-outline" onclick="resetDatasetToBackup()" title="Restore pristine Kaggle 2018 dataset">
+                ↺ Reset to Default Kaggle 2018
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Search & Filter Bar -->
+            <div class="ds-toolbar">
+              <div class="ds-search-wrap">
+                <input type="text" id="dsSearchInput" class="pf-input" placeholder="Search app by name in dataset…" oninput="debounceDatasetSearch()" />
+              </div>
+              <div class="ds-cat-wrap">
+                <select id="dsCategorySelect" class="pf-input" onchange="loadDatasetTable(1)">
+                  <option value="">All Categories</option>
+                </select>
+              </div>
+              <span class="ds-count-pill" id="dsCountPill">Loading records…</span>
+            </div>
+
+            <!-- Records Table -->
+            <div class="table-wrap ds-table-wrap">
+              <table class="data-table" id="dsAppsTable">
+                <thead>
+                  <tr>
+                    <th>App Name</th>
+                    <th>Category</th>
+                    <th class="th-num">Rating</th>
+                    <th class="th-num">Reviews</th>
+                    <th class="th-num">Installs</th>
+                    <th class="th-right">Type</th>
+                    <th class="th-num">Price</th>
+                    <th>Updated</th>
+                    <th class="th-right" style="min-width:130px">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dsAppsTableBody">
+                  <tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted)">Loading dataset records…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="ds-pagination" id="dsPagination">
+              <button type="button" class="btn-outline btn-xs" id="dsPrevBtn" onclick="changeDatasetPage(-1)" disabled>◀ Previous</button>
+              <span class="ds-page-info" id="dsPageInfo">Page 1</span>
+              <button type="button" class="btn-outline btn-xs" id="dsNextBtn" onclick="changeDatasetPage(1)" disabled>Next ▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB PANE 3: SYSTEM DIAGNOSTICS ── -->
+      <div class="admin-pane hidden" id="paneAdmDiag">
+        <div class="grid-3-col mb-4">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon" style="background:rgba(99,102,241,0.12);color:#6366f1">📂</div>
+              <div class="stat-meta">
+                <span class="stat-label">Active Dataset Apps</span>
+                <span class="stat-value" id="diagAppsCount">—</span>
+                <span class="stat-sub" id="diagDatasetPath">googleplaystore.csv</span>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon" style="background:rgba(16,185,129,0.12);color:#10b981">⚡</div>
+              <div class="stat-meta">
+                <span class="stat-label">Server Uptime</span>
+                <span class="stat-value" id="diagUptime">—</span>
+                <span class="stat-sub" id="diagPythonVer">Python &amp; Scikit-learn</span>
+              </div>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-icon" style="background:rgba(245,158,11,0.12);color:#f59e0b">🤖</div>
+              <div class="stat-meta">
+                <span class="stat-label">Cached ML Model</span>
+                <span class="stat-value" id="diagModelCached">Ready</span>
+                <span class="stat-sub" id="diagModelType">Multi-algorithm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extended Telemetry Card -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">⚙️ Detailed System Telemetry</h3>
+              <p class="card-subtitle">Real-time memory, dataset storage, and runtime specifications</p>
+            </div>
+            <button type="button" class="btn-primary-sm" id="adminExportBtn" onclick="downloadDatasetCsv()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export Raw CSV
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="diag-telemetry-grid">
+              <div class="diag-item">
+                <span class="diag-item-lbl">User Reviews Ingested</span>
+                <strong class="diag-item-val" id="diagReviewsCount">—</strong>
+              </div>
+              <div class="diag-item">
+                <span class="diag-item-lbl">Active CSV File Size</span>
+                <strong class="diag-item-val" id="diagFileSize">—</strong>
+              </div>
+              <div class="diag-item">
+                <span class="diag-item-lbl">Unique App Categories</span>
+                <strong class="diag-item-val" id="diagCategoriesCount">—</strong>
+              </div>
+              <div class="diag-item">
+                <span class="diag-item-lbl">Runtime Environment</span>
+                <strong class="diag-item-val" id="diagEnvSpec" style="font-size:12px">—</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB PANE 4: USERS & ACCESS MANAGEMENT ── -->
+      <div class="admin-pane hidden" id="paneAdmUsers">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">👥 User Management &amp; Role Access</h3>
+              <p class="card-subtitle">Manage accounts and role permissions (Admin vs Standard User)</p>
+            </div>
+            <button class="btn-outline btn-xs" onclick="loadUsersTable()">Refresh List</button>
+          </div>
+          <div class="card-body table-wrap">
+            <table class="data-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Joined</th>
+                  <th class="th-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr><td colspan="5" style="text-align:center;padding:15px;color:var(--text-muted)">Loading registered users…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB PANE 5: DATASET UPLOAD ── -->
+      <div class="admin-pane hidden" id="paneAdmUpload">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">📤 Replace Active Dataset (CSV)</h3>
+              <p class="card-subtitle">Upload a new dataset to completely refresh the PlayStore analytics pipeline</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="upload-dropzone" id="uploadDropzone" onclick="document.getElementById('csvFileInput').click()">
+              <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileSelected(event)" />
+              <div class="dropzone-icon">📁</div>
+              <p class="dropzone-title">Click to browse or drop your CSV dataset here</p>
+              <p class="dropzone-sub">Accepts Google Play Store format (.csv) with App, Category, Rating, Reviews, Size, Installs, Price</p>
+            </div>
+            <div class="upload-preview hidden" id="uploadPreview">
+              <div class="up-file-info">
+                <span class="up-file-name" id="upFilename">—</span>
+                <span class="up-file-size" id="upFilesize">—</span>
+              </div>
+              <button type="button" class="btn-primary-sm" id="upSubmitBtn" onclick="submitDatasetUpload()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload &amp; Reload Application
+              </button>
+            </div>
+            <div class="upload-status hidden" id="uploadStatus"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       DATASET IN-PLACE EDIT MODAL
+  ══════════════════════════════════════════════ -->
+  <div class="modal-backdrop hidden" id="modalEditAppBackdrop" onclick="closeEditAppModal()"></div>
+  <div class="auth-modal app-edit-modal hidden" id="modalEditApp" role="dialog" aria-modal="true" aria-labelledby="editAppTitle">
+    <div class="auth-modal-header">
+      <h3 class="card-title" id="editAppTitle">✏️ Edit App Record in CSV</h3>
+      <button type="button" class="auth-close-btn" onclick="closeEditAppModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="auth-modal-body">
+      <form id="editAppForm" onsubmit="handleEditAppSubmit(event)">
+        <input type="hidden" id="editOriginalAppName" />
+        <div class="auth-field">
+          <label class="auth-label" for="editAppName">App Name</label>
+          <input type="text" id="editAppName" class="pf-input" required />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="editAppCategory">Category</label>
+          <select id="editAppCategory" class="pf-input" required></select>
+        </div>
+        <div class="grid-2-col">
+          <div class="auth-field">
+            <label class="auth-label" for="editAppRating">Rating (1.0 – 5.0)</label>
+            <input type="number" id="editAppRating" class="pf-input" step="0.1" min="1.0" max="5.0" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="editAppReviews">Reviews Count</label>
+            <input type="number" id="editAppReviews" class="pf-input" min="0" required />
+          </div>
+        </div>
+        <div class="grid-3-col">
+          <div class="auth-field">
+            <label class="auth-label" for="editAppInstalls">Installs</label>
+            <input type="number" id="editAppInstalls" class="pf-input" min="0" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="editAppSize">Size (MB)</label>
+            <input type="number" id="editAppSize" class="pf-input" step="0.1" min="0.1" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="editAppType">Type</label>
+            <select id="editAppType" class="pf-input">
+              <option value="Free">Free</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="editAppPrice">Price ($)</label>
+          <input type="number" id="editAppPrice" class="pf-input" step="0.01" min="0" required />
+        </div>
+        <button type="submit" class="btn-primary w-full mt-4" id="editAppSubmitBtn">
+          Save Changes to Dataset
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       ADD NEW APP MODAL
+  ══════════════════════════════════════════════ -->
+  <div class="modal-backdrop hidden" id="modalAddAppBackdrop" onclick="closeAddAppModal()"></div>
+  <div class="auth-modal app-edit-modal hidden" id="modalAddApp" role="dialog" aria-modal="true" aria-labelledby="addAppTitle">
+    <div class="auth-modal-header">
+      <h3 class="card-title" id="addAppTitle">➕ Add New App to Dataset</h3>
+      <button type="button" class="auth-close-btn" onclick="closeAddAppModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="auth-modal-body">
+      <form id="addAppForm" onsubmit="handleAddAppSubmit(event)">
+        <div class="auth-field">
+          <label class="auth-label" for="addAppName">App Name</label>
+          <input type="text" id="addAppName" class="pf-input" placeholder="e.g. FitPulse Tracker" required />
+        </div>
+        <div class="auth-field">
+          <label class="auth-label" for="addAppCategory">Category</label>
+          <select id="addAppCategory" class="pf-input" required></select>
+        </div>
+        <div class="grid-3-col">
+          <div class="auth-field">
+            <label class="auth-label" for="addAppRating">Rating</label>
+            <input type="number" id="addAppRating" class="pf-input" step="0.1" min="1.0" max="5.0" value="4.5" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="addAppReviews">Reviews</label>
+            <input type="number" id="addAppReviews" class="pf-input" min="0" value="1200" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="addAppInstalls">Installs</label>
+            <input type="number" id="addAppInstalls" class="pf-input" min="0" value="50000" required />
+          </div>
+        </div>
+        <div class="grid-3-col">
+          <div class="auth-field">
+            <label class="auth-label" for="addAppSize">Size (MB)</label>
+            <input type="number" id="addAppSize" class="pf-input" step="0.1" min="0.1" value="25.0" required />
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="addAppType">Type</label>
+            <select id="addAppType" class="pf-input">
+              <option value="Free">Free</option>
+              <option value="Paid">Paid</option>
+            </select>
+          </div>
+          <div class="auth-field">
+            <label class="auth-label" for="addAppPrice">Price ($)</label>
+            <input type="number" id="addAppPrice" class="pf-input" step="0.01" min="0" value="0" />
+          </div>
+        </div>
+        <button type="submit" class="btn-primary w-full mt-4" id="addAppSubmitBtn">
+          Add App &amp; Rebuild Dashboard Cache
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="admin.js?v=3"></script>
+</body>
+</html>

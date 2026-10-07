@@ -1,0 +1,18 @@
+[
+  {
+    "id": "u-admin",
+    "name": "Admin User",
+    "email": "admin@playstore.io",
+    "password_hash": "scrypt:32768:8:1$N3mpM849Zcjxdi0j$1c5eabd16c7d0c276500da7a7574bc8f9a5da712ef2eadcda7de98f6344d538704c1835293ebc3d1068dccb6a1184f3eef1b2e1c4a1bf0929f401b5224771edd",
+    "role": "admin",
+    "created_at": "2026-10-07T12:54:29.422434+00:00"
+  },
+  {
+    "id": "u-user",
+    "name": "Standard Analyst",
+    "email": "user@playstore.io",
+    "password_hash": "scrypt:32768:8:1$cUSYTlUW8upMnrcQ$7fe9d643e10f2eea4049b6cf3478749a05f80a7487f4c911ee423590f5b1b16c2c3b281b5e907ae0e08c008b7ab2e038673b7e951016fbe3ed61cb02b5915512",
+    "role": "user",
+    "created_at": "2026-10-07T12:54:29.554630+00:00"
+  }
+]

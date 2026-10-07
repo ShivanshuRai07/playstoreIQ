@@ -84,7 +84,7 @@ const NAV_TITLES = {
    STATE
 ───────────────────────────────────────────────────────────────── */
 let state = {
-  timeRange:      "12",
+  timeRange:      "all",
   customStart:    "",
   customEnd:      "",
   categories:     [],
@@ -282,36 +282,7 @@ document.querySelectorAll(".nav-item").forEach(item => {
   });
 });
 
-/* ─────────────────────────────────────────────────────────────────
-   TOP BAR — TIME RANGE
-───────────────────────────────────────────────────────────────── */
-const datePopover = document.getElementById("datePopover");
-
-document.querySelectorAll(".dr-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".dr-btn").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    state.timeRange = btn.dataset.val;
-    if (state.timeRange === "custom") {
-      datePopover.classList.remove("hidden");
-    } else {
-      datePopover.classList.add("hidden");
-      renderAll();
-    }
-  });
-});
-
-document.getElementById("applyCustomDate").addEventListener("click", () => {
-  state.customStart = document.getElementById("dateStart").value;
-  state.customEnd   = document.getElementById("dateEnd").value;
-  datePopover.classList.add("hidden");
-  renderAll();
-});
-
-document.addEventListener("click", e => {
-  if (!e.target.closest(".date-range-group") && !e.target.closest(".date-popover"))
-    datePopover.classList.add("hidden");
-});
+/* Date filtering removed for Kaggle 2018 dataset (all data active) */
 
 /* ─────────────────────────────────────────────────────────────────
    SEARCH
@@ -334,8 +305,10 @@ document.addEventListener("keydown", e => {
 /* ─────────────────────────────────────────────────────────────────
    EXPORT
 ───────────────────────────────────────────────────────────────── */
-document.getElementById("exportBtn").addEventListener("click", exportCSV);
-document.getElementById("explorerExportBtn").addEventListener("click", exportCSV);
+const expBtn = document.getElementById("exportBtn");
+if (expBtn) expBtn.addEventListener("click", exportCSV);
+const expExpBtn = document.getElementById("explorerExportBtn");
+if (expExpBtn) expExpBtn.addEventListener("click", exportCSV);
 function exportCSV() {
   window.open(`${API}/export?${buildParams()}`, "_blank");
 }
@@ -1122,6 +1095,7 @@ async function renderHeatmap() {
   const data = await apiFetch("charts/category_rating_heatmap");
   document.getElementById("skHeatmap").style.display = "none";
   const wrap = document.getElementById("heatmapWrap");
+  if (!wrap) return;
   wrap.innerHTML = "";
   if (!data.categories?.length) return;
   const maxV = Math.max(...data.data.flat(), 1);
@@ -1183,32 +1157,85 @@ document.querySelectorAll(".th-sortable").forEach(th => {
   });
 });
 
-/* ── Explorer table ── */
-async function renderExplorer() {
-  const data = await apiFetch("charts/top10_by_installs"); // reuse endpoint (top10 is adequate for explorer preview)
-  // Use a separate full endpoint call — show top 50 filtered
-  try {
-    const kpiData = await apiFetch("kpis");
-    const total = kpiData.totalApps?.value || 0;
-    document.getElementById("explorerCount").textContent = `${fmtNum(total)} apps match current filters`;
-  } catch(e) {}
+/* ── Explorer table with Real Sorting & Pagination ── */
+let explorerState = { page: 1, limit: 20, sortBy: "Installs", sortDir: "desc" };
 
-  document.getElementById("skExplorer").style.display = "none";
+async function renderExplorer(page = 1) {
+  explorerState.page = Math.max(1, page);
+  const sk = document.getElementById("skExplorer");
   const table = document.getElementById("explorerTable");
-  table.classList.remove("hidden");
-  // Explorer shows top10 data as preview
   const tbody = document.getElementById("explorerBody");
-  tbody.innerHTML = data.map(row => `
-    <tr>
-      <td>${row.App}</td>
-      <td><span class="cat-badge">${(row.Category||"").replace(/_/g," ")}</span></td>
-      <td class="td-num">${row.Rating ? (+row.Rating).toFixed(1) : "—"}</td>
-      <td class="td-num">${fmtNum(row.Installs)}</td>
-      <td class="td-right"><span class="type-badge ${(row.Type||"Free").toLowerCase()}">${row.Type||"Free"}</span></td>
-      <td class="td-num">—</td>
-      <td>—</td>
-    </tr>`).join("");
+  const countEl = document.getElementById("explorerCount");
+
+  const qs = new URLSearchParams({
+    page: explorerState.page,
+    limit: explorerState.limit,
+    sortBy: explorerState.sortBy,
+    sortDir: explorerState.sortDir,
+  });
+  if (state.categories.length) qs.set("categories", state.categories.join(","));
+  if (state.freePaid) qs.set("freePaid", state.freePaid);
+  if (state.contentRating) qs.set("contentRating", state.contentRating);
+  if (state.ratingMin !== "1") qs.set("ratingMin", state.ratingMin);
+  if (state.ratingMax !== "5") qs.set("ratingMax", state.ratingMax);
+  if (state.androidVersion) qs.set("androidVersion", state.androidVersion);
+  if (state.search) qs.set("search", state.search);
+
+  try {
+    const res = await fetch(`${API}/apps?${qs.toString()}`);
+    const data = await res.json();
+    if (sk) sk.classList.add("hidden");
+    if (table) table.classList.remove("hidden");
+
+    if (countEl) countEl.textContent = `${(data.total || 0).toLocaleString()} apps match current filters`;
+
+    if (tbody) {
+      if (!data.apps || !data.apps.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">No matching apps found</td></tr>`;
+      } else {
+        tbody.innerHTML = data.apps.map(row => `
+          <tr>
+            <td><strong title="${row.App}">${row.App}</strong></td>
+            <td><span class="cat-badge">${(row.Category||"").replace(/_/g," ")}</span></td>
+            <td class="td-num">${row.Rating != null ? (+row.Rating).toFixed(1) + " ★" : "—"}</td>
+            <td class="td-num">${fmtNum(row.Reviews)}</td>
+            <td class="td-num">${fmtNum(row.Installs)}</td>
+            <td class="td-right"><span class="type-badge ${(row.Type||"Free").toLowerCase()}">${row.Type||"Free"}</span></td>
+            <td class="td-num">${row.Price > 0 ? "$" + (+row.Price).toFixed(2) : "$0"}</td>
+            <td>${row["Last Updated"] || "—"}</td>
+          </tr>
+        `).join("");
+      }
+    }
+
+    const prevBtn = document.getElementById("expPrevBtn");
+    const nextBtn = document.getElementById("expNextBtn");
+    const pageInfo = document.getElementById("expPageInfo");
+    if (prevBtn) prevBtn.disabled = explorerState.page <= 1;
+    if (nextBtn) nextBtn.disabled = explorerState.page >= (data.pages || 1);
+    if (pageInfo) pageInfo.textContent = `Page ${explorerState.page} of ${data.pages || 1}`;
+  } catch(e) {
+    console.error("Explorer error:", e);
+  }
 }
+
+window.sortExplorer = function(col) {
+  if (explorerState.sortBy === col) {
+    explorerState.sortDir = explorerState.sortDir === "asc" ? "desc" : "asc";
+  } else {
+    explorerState.sortBy = col;
+    explorerState.sortDir = "desc";
+  }
+  ["App","Category","Rating","Reviews","Installs","Price"].forEach(c => {
+    const el = document.getElementById("sort_" + c);
+    if (el) el.textContent = (c === col) ? (explorerState.sortDir === "asc" ? "▲" : "▼") : "↕";
+  });
+  renderExplorer(1);
+};
+
+window.changeExplorerPage = function(delta) {
+  renderExplorer(explorerState.page + delta);
+};
 
 /* ─────────────────────────────────────────────────────────────────
    SENTIMENT
@@ -1279,11 +1306,10 @@ async function renderSentiment() {
   });
 
   // Word cloud
-  document.getElementById("skWordcloud").style.display = "none";
-  const wc = document.getElementById("wordcloudWrap");
-  // Remove skeleton but keep container
   const sk = document.getElementById("skWordcloud");
-  if (sk) sk.remove();
+  if (sk) sk.classList.add("hidden");
+  const wc = document.getElementById("wordcloudWrap");
+  if (wc) wc.innerHTML = "";
 
   const wcColors = [
     { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" },
@@ -1414,6 +1440,7 @@ async function renderMLModel() {
 async function renderAssociation() {
   const data = await apiFetch("mining/association");
   const grid = document.getElementById("assocGrid");
+  if (!grid) return;
   const typeCfg = {
     paid_category: { label: "Paid Trend",    color: "var(--amber)", bg: "var(--amber-bg)" },
     high_rated:    { label: "High Rated",     color: "var(--green)", bg: "var(--green-bg)" },
@@ -1436,8 +1463,7 @@ async function renderAssociation() {
 async function renderAll(showLoading = true) {
   if (showLoading) setConn(true);
   try {
-    // Core tiles & charts run in parallel
-    await Promise.all([
+    await Promise.allSettled([
       renderKPIs(),
       renderUpdatedPerMonth(),
       renderFreePaid(),
@@ -1451,281 +1477,14 @@ async function renderAll(showLoading = true) {
       renderPriceRating(),
       renderTop10(),
       renderInsights(),
-    ]);
-    // Secondary (slower) tasks
-    await Promise.all([
       renderSentiment(),
       renderClustering(),
-      renderMLModel(),
-      renderAssociation(),
-      renderMLCompare(),
       renderExplorer(),
     ]);
     setConn(true);
   } catch(e) {
     setConn(false);
     console.error("renderAll error:", e);
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   ML ALGORITHM COMPARISON
-───────────────────────────────────────────────────────────────── */
-
-const ALGO_COLORS = {
-  "Random Forest":      "#6366f1",
-  "Gradient Boosting":  "#f59e0b",
-  "Logistic Regression":"#10b981",
-  "Decision Tree":      "#3b82f6",
-  "KNN":                "#ec4899",
-  "Naive Bayes":        "#8b5cf6",
-};
-
-async function renderMLCompare() {
-  const params = buildParams();
-  let data;
-  try {
-    const res = await fetch(`${API}/mining/ml_compare?${params}`);
-    data = await res.json();
-  } catch(e) {
-    console.error("ML compare error:", e);
-    return;
-  }
-
-  if (!data || data.error) {
-    console.warn("ML compare:", data ? data.error : "No data");
-    return;
-  }
-
-  const algos = data.algorithms || [];
-  const P = tok();
-
-  /* ── Best Banner ── */
-  const banner = document.getElementById("bestAlgoBanner");
-  const bName  = document.getElementById("bestAlgoName");
-  const bTip   = document.getElementById("bestAlgoTip");
-  const bBadge = document.getElementById("bestAlgoBadge");
-  if (banner && data.bestAlgorithm) {
-    if (bName)  bName.textContent  = data.bestAlgorithm;
-    if (bTip)   bTip.textContent   = data.bestTip || "";
-    if (bBadge) bBadge.textContent = (data.bestAccuracy || 0).toFixed(1) + "%";
-    banner.classList.remove("hidden");
-  }
-
-  /* ── ML Meta pills ── */
-  const mlMeta = document.getElementById("mlMeta");
-  if (mlMeta && data.totalSamples) {
-    mlMeta.innerHTML = `
-      <span class="ml-meta-pill">📊 ${data.totalSamples.toLocaleString()} samples</span>
-      <span class="ml-meta-pill">🎯 ${data.targetLabel || "Rating ≥ 4.3"}</span>
-      <span class="ml-meta-pill">✅ ${data.highRatedPct || 0}% high-rated</span>
-    `;
-    mlMeta.classList.remove("hidden");
-  }
-
-  /* ── Accuracy Bar Chart ── */
-  const accCtx = document.getElementById("mlCompareChart");
-  if (accCtx && algos.length) {
-    revealChart("skMlCompare", "mlCompareChart");
-
-    if (charts.mlCompare) destroyChart("mlCompare");
-    charts.mlCompare = new Chart(accCtx, {
-      type: "bar",
-      data: {
-        labels: algos.map(a => a.name),
-        datasets: [{
-          label: "Accuracy (%)",
-          data: algos.map(a => a.accuracy || 0),
-          backgroundColor: algos.map(a => (a.isBest ? (ALGO_COLORS[a.name] || P.primary) : (ALGO_COLORS[a.name] || P.primary) + "bb")),
-          borderColor:     algos.map(a => ALGO_COLORS[a.name] || P.primary),
-          borderWidth: 2,
-          borderRadius: 8,
-          borderSkipped: false,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: ctx => ` ${ctx.parsed.y.toFixed(2)}% test accuracy`,
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: P.border + "44" },
-            ticks: { color: P.text2, font: { family: "'Inter',system-ui", size: 12, weight: "500" } }
-          },
-          y: {
-            min: 0, max: 100,
-            grid: { color: P.border + "44" },
-            ticks: {
-              color: P.text2,
-              font: { family: "'Inter',system-ui", size: 12 },
-              callback: v => v + "%"
-            }
-          }
-        },
-        animation: { duration: 800, easing: "easeOutQuart" }
-      }
-    });
-  }
-
-  /* ── Multi-Metric Grouped Bar ── */
-  const radCtx = document.getElementById("mlRadarChart");
-  if (radCtx && algos.length) {
-    revealChart("skMlRadar", "mlRadarChart");
-
-    const metricDefs = [
-      { key: "accuracy",  label: "Accuracy",  color: "#6366f1" },
-      { key: "precision", label: "Precision", color: "#10b981" },
-      { key: "recall",    label: "Recall",    color: "#f59e0b" },
-      { key: "f1",        label: "F1 Score",  color: "#ec4899" },
-    ];
-
-    if (charts.mlRadar) destroyChart("mlRadar");
-    charts.mlRadar = new Chart(radCtx, {
-      type: "bar",
-      data: {
-        labels: algos.map(a => a.name),
-        datasets: metricDefs.map(m => ({
-          label: m.label,
-          data: algos.map(a => a[m.key] || 0),
-          backgroundColor: m.color + "cc",
-          borderColor: m.color,
-          borderWidth: 1.5,
-          borderRadius: 4,
-        }))
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: true,
-            position: "top",
-            labels: { color: P.text2, font: { family: "'Inter',system-ui", size: 12, weight: "500" }, boxWidth: 14 }
-          },
-          tooltip: {
-            callbacks: {
-              label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
-            }
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: P.border + "33" },
-            ticks: { color: P.text2, font: { family: "'Inter',system-ui", size: 11, weight: "500" } }
-          },
-          y: {
-            min: 0, max: 100,
-            grid: { color: P.border + "33" },
-            ticks: { color: P.text2, font: { family: "'Inter',system-ui", size: 11 }, callback: v => v + "%" }
-          }
-        },
-        animation: { duration: 900, easing: "easeOutQuart" }
-      }
-    });
-  }
-
-  /* ── Algorithm Cards ── */
-  const grid = document.getElementById("algoCardsGrid");
-  if (grid && algos.length) {
-    grid.innerHTML = algos.map(a => {
-      const color    = ALGO_COLORS[a.name] || "#6366f1";
-      const bestBadge = a.isBest ? `<span class="algo-card-best-badge">👑 Best Model</span>` : "";
-      const speedClass = (a.trainTimeMs || 0) < 100 ? "var(--green)" : (a.trainTimeMs || 0) < 500 ? "var(--amber)" : "var(--red)";
-      return `
-        <div class="algo-card ${a.isBest ? "best" : ""}">
-          <div class="algo-card-accent" style="background:${color}"></div>
-          <div class="algo-card-header">
-            <span class="algo-card-icon">${a.icon || "🤖"}</span>
-            <span class="algo-card-name">${a.name}</span>
-            ${bestBadge}
-          </div>
-          <p class="algo-card-desc">${a.description || ""}</p>
-          <div class="algo-metrics">
-            <div class="algo-metric">
-              <span class="algo-metric-val" style="color:${color}">${(a.accuracy||0).toFixed(1)}%</span>
-              <span class="algo-metric-lbl">Accuracy</span>
-            </div>
-            <div class="algo-metric">
-              <span class="algo-metric-val">${(a.precision||0).toFixed(1)}%</span>
-              <span class="algo-metric-lbl">Precision</span>
-            </div>
-            <div class="algo-metric">
-              <span class="algo-metric-val">${(a.recall||0).toFixed(1)}%</span>
-              <span class="algo-metric-lbl">Recall</span>
-            </div>
-            <div class="algo-metric">
-              <span class="algo-metric-val">${(a.f1||0).toFixed(1)}%</span>
-              <span class="algo-metric-lbl">F1 Score</span>
-            </div>
-          </div>
-          <div class="algo-speed">
-            <span class="algo-speed-dot" style="background:${speedClass}"></span>
-            Train time: <strong>${a.trainTimeMs != null ? a.trainTimeMs.toFixed(0)+"ms" : "—"}</strong> &nbsp;|&nbsp;
-            AUC: <strong>${a.auc != null ? a.auc.toFixed(1)+"%" : "—"}</strong>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  /* ── Feature Importance of Best Algo ── */
-  const fiCtx = document.getElementById("featImpChart");
-  const fiBadge = document.getElementById("fiAlgoName");
-  const bestAlgo = algos.find(a => a.isBest) || algos[0];
-  if (fiCtx && bestAlgo && bestAlgo.featureImportance && bestAlgo.featureImportance.length) {
-    revealChart("skFeatImp", "featImpChart");
-    if (fiBadge) fiBadge.textContent = bestAlgo.name;
-
-    const fi       = bestAlgo.featureImportance;
-    const fiColor  = ALGO_COLORS[bestAlgo.name] || P.primary;
-    const fiLabels = fi.map(f => f.feature.replace("LogInstalls","Log(Installs)").replace("LogReviews","Log(Reviews)").replace("IsFree_int","Is Free"));
-
-    if (charts.featImp) destroyChart("featImp");
-    charts.featImp = new Chart(fiCtx, {
-      type: "bar",
-      data: {
-        labels: fiLabels,
-        datasets: [{
-          label: "Importance",
-          data: fi.map(f => +(f.importance * 100).toFixed(2)),
-          backgroundColor: fi.map((_, i) => fiColor + (i === 0 ? "" : "aa")),
-          borderColor: fiColor,
-          borderWidth: 1.5,
-          borderRadius: 6,
-          borderSkipped: false,
-        }]
-      },
-      options: {
-        indexAxis: "y",
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: { label: ctx => ` ${ctx.parsed.x.toFixed(2)}% relative importance` }
-          }
-        },
-        scales: {
-          x: {
-            min: 0,
-            grid: { color: P.border + "44" },
-            ticks: { color: P.text2, font: { family: "'Inter',system-ui", size: 12 }, callback: v => v + "%" }
-          },
-          y: {
-            grid: { display: false },
-            ticks: { color: P.text, font: { family: "'Inter',system-ui", size: 13, weight: "600" } }
-          }
-        },
-        animation: { duration: 800 }
-      }
-    });
   }
 }
 
@@ -1815,480 +1574,42 @@ window.runPrediction = async function() {
 };
 
 /* ─────────────────────────────────────────────────────────────────
-   AUTHENTICATION & RBAC (Admin vs Standard User)
+
+/* ─────────────────────────────────────────────────────────────────
+   USER DASHBOARD AUTHENTICATION & INITIALIZATION
 ───────────────────────────────────────────────────────────────── */
 let currentUser = null;
 let currentToken = localStorage.getItem("playstore_iq_token") || null;
-let selectedUploadFile = null;
 
-// Dataset Editor State
-let dsState = { page: 1, limit: 12, search: "", category: "", total: 0, pages: 1 };
-let currentDsApps = [];
-let dsDebounceTimer = null;
-
-function getAuthHeaders(extra = {}) {
-  const headers = { ...extra };
-  if (currentToken) {
-    headers["Authorization"] = `Bearer ${currentToken}`;
+async function checkUserAuth() {
+  if (!currentToken) {
+    window.location.href = "/login.html";
+    return false;
   }
-  return headers;
-}
-
-function isAdmin() {
-  return currentUser && currentUser.role === "admin";
-}
-
-function showToast(msg, type = "info") {
-  let toast = document.getElementById("psToast");
-  if (!toast) {
-    toast = document.createElement("div");
-    toast.id = "psToast";
-    toast.className = "ps-toast";
-    document.body.appendChild(toast);
-  }
-  toast.textContent = msg;
-  toast.className = `ps-toast show ps-toast-${type}`;
-  clearTimeout(toast._timeout);
-  toast._timeout = setTimeout(() => {
-    toast.className = "ps-toast";
-  }, 4000);
-}
-
-function applyAuthUI() {
-  const loginScreen = document.getElementById("loginPortalScreen");
-  const appShell    = document.getElementById("appShell");
-  const signInBtn   = document.getElementById("authSignInBtn");
-  const userPill    = document.getElementById("authUserPill");
-  const avatar      = document.getElementById("authAvatar");
-  const userName    = document.getElementById("authUserName");
-  const userBadge   = document.getElementById("authUserBadge");
-  const adName      = document.getElementById("adUserName");
-  const adEmail     = document.getElementById("adUserEmail");
-  const adRolePill  = document.getElementById("adRolePill");
-  const navAdmin    = document.getElementById("navAdminItem");
-  const secAdmin    = document.getElementById("section-admin");
-  const exportBtn   = document.getElementById("exportBtn");
-  const explorerExportBtn = document.getElementById("explorerExportBtn");
-  const adQuickSwitch = document.getElementById("adQuickSwitch");
-
-  if (currentUser) {
-    if (loginScreen) loginScreen.classList.add("hidden");
-    if (appShell)    appShell.classList.remove("hidden");
-    if (signInBtn)   signInBtn.classList.add("hidden");
-    if (userPill)    userPill.classList.remove("hidden");
-    if (avatar)      avatar.textContent = (currentUser.name || currentUser.email || "U").charAt(0).toUpperCase();
-    if (userName)    userName.textContent = currentUser.name || currentUser.email;
-    if (userBadge) {
-      userBadge.textContent = currentUser.role === "admin" ? "👑 Admin" : "👤 User";
-      userBadge.className = `auth-user-badge ${currentUser.role === "admin" ? "badge-admin" : "badge-user"}`;
+  try {
+    const res = await fetch(`${API}/auth/me`, {
+      headers: { "Authorization": `Bearer ${currentToken}` }
+    });
+    if (!res.ok) {
+      localStorage.removeItem("playstore_iq_token");
+      localStorage.removeItem("playstore_iq_user");
+      window.location.href = "/login.html";
+      return false;
     }
-    if (adName)      adName.textContent = currentUser.name || "User";
-    if (adEmail)     adEmail.textContent = currentUser.email;
-    if (adRolePill) {
-      adRolePill.textContent = currentUser.role === "admin" ? "Full Administrator" : "Standard Analyst";
-      adRolePill.className = `ad-role-pill ${currentUser.role === "admin" ? "role-admin" : "role-user"}`;
-    }
+    const data = await res.json();
+    currentUser = data.user;
+    const nameEl = document.getElementById("userNameLabel");
+    if (nameEl) nameEl.textContent = currentUser.name || "Analyst";
 
     if (currentUser.role === "admin") {
-      if (navAdmin)  navAdmin.classList.remove("hidden");
-      if (secAdmin)  secAdmin.classList.remove("hidden");
-      if (exportBtn) exportBtn.classList.remove("hidden");
-      if (explorerExportBtn) explorerExportBtn.classList.remove("hidden");
-      if (adQuickSwitch) adQuickSwitch.classList.remove("hidden");
-    } else {
-      // 100% CLEAN USER VIEW: REMOVE ALL ADMIN CONTROLS FROM USER
-      if (navAdmin)  navAdmin.classList.add("hidden");
-      if (secAdmin)  secAdmin.classList.add("hidden");
-      if (exportBtn) exportBtn.classList.add("hidden");
-      if (explorerExportBtn) explorerExportBtn.classList.add("hidden");
-      if (adQuickSwitch) adQuickSwitch.classList.add("hidden");
-
-      // If user was viewing admin section, scroll back to overview
-      const activeNav = document.querySelector(".nav-item.active");
-      if (activeNav && activeNav.dataset.section === "admin") {
-        const overviewNav = document.querySelector('.nav-item[data-section="overview"]');
-        if (overviewNav) overviewNav.click();
-      }
+      const jumpLink = document.getElementById("sideAdminLinkWrap");
+      if (jumpLink) jumpLink.classList.remove("hidden");
     }
-  } else {
-    // Unauthenticated: Show dedicated login portal screen, hide app shell
-    if (loginScreen) loginScreen.classList.remove("hidden");
-    if (appShell)    appShell.classList.add("hidden");
-    if (signInBtn)   signInBtn.classList.remove("hidden");
-    if (userPill)    userPill.classList.add("hidden");
-    if (navAdmin)    navAdmin.classList.add("hidden");
-    if (secAdmin)    secAdmin.classList.add("hidden");
-  }
-}
-
-function showPortalAlert(msg, type = "error") {
-  const alertEl = document.getElementById("portalAlert");
-  if (!alertEl) return;
-  alertEl.textContent = msg;
-  alertEl.className = `lps-alert lps-alert-${type}`;
-  alertEl.classList.remove("hidden");
-}
-
-function clearPortalAlert() {
-  const alertEl = document.getElementById("portalAlert");
-  if (alertEl) alertEl.classList.add("hidden");
-}
-
-function togglePortalUserRegister() {
-  const regForm = document.getElementById("portalUserRegForm");
-  const loginForm = document.getElementById("portalUserLoginForm");
-  if (!regForm || !loginForm) return;
-  const isHidden = regForm.classList.contains("hidden");
-  if (isHidden) {
-    regForm.classList.remove("hidden");
-    loginForm.classList.add("hidden");
-  } else {
-    regForm.classList.add("hidden");
-    loginForm.classList.remove("hidden");
-  }
-}
-
-async function handlePortalUserLogin(event) {
-  event.preventDefault();
-  clearPortalAlert();
-  const emailInput = document.getElementById("portalUserEmail");
-  const passInput  = document.getElementById("portalUserPassword");
-  const email = emailInput ? emailInput.value.trim() : "";
-  const password = passInput ? passInput.value.trim() : "";
-  const btn = document.getElementById("portalUserSubmitBtn");
-  if (btn) { btn.disabled = true; btn.textContent = "Signing In as User..."; }
-
-  try {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem("playstore_iq_token", currentToken);
-      applyAuthUI();
-      showToast(`Welcome to PlayStoreIQ, ${currentUser.name}!`, "success");
-      await renderAll();
-    } else {
-      showPortalAlert(data.error || "User login failed. Please check credentials.", "error");
-    }
+    return true;
   } catch (e) {
-    showPortalAlert("Network error: " + e.message, "error");
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = "Sign In as User"; }
-  }
-}
-
-async function handlePortalAdminLogin(event) {
-  event.preventDefault();
-  clearPortalAlert();
-  const emailInput = document.getElementById("portalAdminEmail");
-  const passInput  = document.getElementById("portalAdminPassword");
-  const email = emailInput ? emailInput.value.trim() : "";
-  const password = passInput ? passInput.value.trim() : "";
-  const btn = document.getElementById("portalAdminSubmitBtn");
-  if (btn) { btn.disabled = true; btn.textContent = "Authenticating Administrator..."; }
-
-  try {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      if (data.user.role !== "admin") {
-        showPortalAlert("Access Denied: Account role is 'User'. Please sign in via the User Portal on the left.", "error");
-        return;
-      }
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem("playstore_iq_token", currentToken);
-      applyAuthUI();
-      showToast(`👑 Administrator Authenticated: Welcome, ${currentUser.name}!`, "success");
-      await renderAll();
-      loadAdminDiagnostics();
-      loadUsersTable();
-      loadDatasetTable(1);
-      renderMLCompare();
-    } else {
-      showPortalAlert(data.error || "Admin login failed. Please check credentials.", "error");
-    }
-  } catch (e) {
-    showPortalAlert("Network error: " + e.message, "error");
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = "👑 Sign In as Administrator"; }
-  }
-}
-
-async function handlePortalUserRegister(event) {
-  event.preventDefault();
-  clearPortalAlert();
-  const name = document.getElementById("portalRegName").value.trim();
-  const email = document.getElementById("portalRegEmail").value.trim();
-  const password = document.getElementById("portalRegPass").value.trim();
-  const btn = document.getElementById("portalRegSubmitBtn");
-  if (btn) { btn.disabled = true; btn.textContent = "Creating Account..."; }
-
-  try {
-    const res = await fetch(`${API}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, role: "user" })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem("playstore_iq_token", currentToken);
-      applyAuthUI();
-      showToast(`Account created! Welcome, ${currentUser.name}`, "success");
-      await renderAll();
-    } else {
-      showPortalAlert(data.error || "Registration failed.", "error");
-    }
-  } catch (e) {
-    showPortalAlert("Network error: " + e.message, "error");
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = "Create & Sign In"; }
-  }
-}
-
-async function initAuth() {
-  if (currentToken) {
-    try {
-      const res = await fetch(`${API}/auth/me`, {
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        const data = await res.json();
-        currentUser = data.user;
-        applyAuthUI();
-        return;
-      }
-    } catch (e) {
-      console.warn("Auth check failed:", e);
-    }
-  }
-
-  // Not authenticated: present the login portal screen
-  currentUser = null;
-  currentToken = null;
-  localStorage.removeItem("playstore_iq_token");
-  applyAuthUI();
-}
-
-function openAuthModal() {
-  const modal    = document.getElementById("authModal");
-  const backdrop = document.getElementById("authModalBackdrop");
-  const alertEl  = document.getElementById("authAlert");
-  if (modal) modal.classList.remove("hidden");
-  if (backdrop) backdrop.classList.remove("hidden");
-  if (alertEl) alertEl.classList.add("hidden");
-}
-
-function closeAuthModal() {
-  const modal    = document.getElementById("authModal");
-  const backdrop = document.getElementById("authModalBackdrop");
-  if (modal) modal.classList.add("hidden");
-  if (backdrop) backdrop.classList.add("hidden");
-}
-
-function openAdminPortalModal() {
-  openAuthModal();
-  switchAuthTab("login");
-  const em = document.getElementById("loginEmail");
-  const pw = document.getElementById("loginPassword");
-  if (em) em.value = "admin@playstore.io";
-  if (pw) pw.value = "admin123";
-}
-
-function fillAdminCredsAndLogin() {
-  const em = document.getElementById("loginEmail");
-  const pw = document.getElementById("loginPassword");
-  if (em) em.value = "admin@playstore.io";
-  if (pw) pw.value = "admin123";
-  quickLogin("admin");
-}
-
-function switchAuthTab(tab) {
-  const tabLogin = document.getElementById("tabLogin");
-  const tabReg   = document.getElementById("tabRegister");
-  const formLog  = document.getElementById("loginForm");
-  const formReg  = document.getElementById("registerForm");
-  const alertEl  = document.getElementById("authAlert");
-  if (alertEl) alertEl.classList.add("hidden");
-
-  if (tab === "login") {
-    tabLogin.classList.add("active");
-    tabReg.classList.remove("active");
-    formLog.classList.remove("hidden");
-    formReg.classList.add("hidden");
-  } else {
-    tabLogin.classList.remove("active");
-    tabReg.classList.add("active");
-    formLog.classList.add("hidden");
-    formReg.classList.remove("hidden");
-  }
-}
-
-function toggleAuthDropdown(event) {
-  if (event) event.stopPropagation();
-  const dropdown = document.getElementById("authDropdown");
-  if (dropdown) dropdown.classList.toggle("hidden");
-}
-
-document.addEventListener("click", (e) => {
-  const dropdown = document.getElementById("authDropdown");
-  const pill = document.getElementById("authUserPill");
-  if (dropdown && !dropdown.classList.contains("hidden")) {
-    if (!dropdown.contains(e.target) && !pill.contains(e.target)) {
-      dropdown.classList.add("hidden");
-    }
-  }
-});
-
-async function quickLogin(role, notify = true) {
-  clearPortalAlert();
-  const creds = role === "admin"
-    ? { email: "admin@playstore.io", password: "admin123" }
-    : { email: "user@playstore.io", password: "user123" };
-
-  try {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(creds)
-    });
-    const data = await res.json();
-    if (res.ok) {
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem("playstore_iq_token", currentToken);
-      applyAuthUI();
-      closeAuthModal();
-      const dropdown = document.getElementById("authDropdown");
-      if (dropdown) dropdown.classList.add("hidden");
-
-      if (notify) {
-        showToast(
-          currentUser.role === "admin"
-            ? `👑 Logged in as Administrator (${currentUser.name})`
-            : `👤 Logged in as Standard User (${currentUser.name})`,
-          "success"
-        );
-      }
-
-      await renderAll();
-
-      if (currentUser.role === "admin") {
-        loadAdminDiagnostics();
-        loadUsersTable();
-        loadDatasetTable(1);
-        renderMLCompare();
-      }
-    } else {
-      if (notify) showPortalAlert(data.error || "Login failed", "error");
-    }
-  } catch (e) {
-    if (notify) showPortalAlert("Connection error: " + e.message, "error");
-  }
-}
-
-async function handleLoginForm(event) {
-  event.preventDefault();
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-  const alertEl = document.getElementById("authAlert");
-  const submitBtn = document.getElementById("loginSubmitBtn");
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Signing In...";
-  alertEl.classList.add("hidden");
-
-  try {
-    const res = await fetch(`${API}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem("playstore_iq_token", currentToken);
-      applyAuthUI();
-      closeAuthModal();
-      showToast(`Welcome back, ${currentUser.name}!`, "success");
-      if (currentUser.role === "admin") {
-        loadAdminDiagnostics();
-        loadUsersTable();
-        loadDatasetTable(1);
-        renderMLCompare();
-      }
-    } else {
-      alertEl.textContent = data.error || "Login failed.";
-      alertEl.className = "auth-alert auth-alert-error";
-      alertEl.classList.remove("hidden");
-    }
-  } catch (e) {
-    alertEl.textContent = "Network error: " + e.message;
-    alertEl.className = "auth-alert auth-alert-error";
-    alertEl.classList.remove("hidden");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Sign In to Dashboard";
-  }
-}
-
-async function handleRegisterForm(event) {
-  event.preventDefault();
-  const name = document.getElementById("regName").value.trim();
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value.trim();
-  const role = document.getElementById("regRole").value;
-  const alertEl = document.getElementById("authAlert");
-  const submitBtn = document.getElementById("regSubmitBtn");
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Creating Account...";
-  alertEl.classList.add("hidden");
-
-  try {
-    const res = await fetch(`${API}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, role })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      currentToken = data.token;
-      currentUser = data.user;
-      localStorage.setItem("playstore_iq_token", currentToken);
-      applyAuthUI();
-      closeAuthModal();
-      showToast(`Account created! Welcome, ${currentUser.name}`, "success");
-      if (currentUser.role === "admin") {
-        loadAdminDiagnostics();
-        loadUsersTable();
-        loadDatasetTable(1);
-        renderMLCompare();
-      }
-    } else {
-      alertEl.textContent = data.error || "Registration failed.";
-      alertEl.className = "auth-alert auth-alert-error";
-      alertEl.classList.remove("hidden");
-    }
-  } catch (e) {
-    alertEl.textContent = "Network error: " + e.message;
-    alertEl.className = "auth-alert auth-alert-error";
-    alertEl.classList.remove("hidden");
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Create Account & Sign In";
+    console.error("Auth check failed:", e);
+    window.location.href = "/login.html";
+    return false;
   }
 }
 
@@ -2296,625 +1617,31 @@ function handleLogout() {
   currentUser = null;
   currentToken = null;
   localStorage.removeItem("playstore_iq_token");
-  applyAuthUI();
-  const dropdown = document.getElementById("authDropdown");
-  if (dropdown) dropdown.classList.add("hidden");
-  showToast("You have signed out.", "info");
+  localStorage.removeItem("playstore_iq_user");
+  window.location.href = "/login.html";
 }
-
-/* ─────────────────────────────────────────────────────────────────
-   ADMIN CONSOLE TABS
-───────────────────────────────────────────────────────────────── */
-function switchAdminTab(tabName) {
-  const tabs = ["ml", "dataset", "diag", "users", "upload"];
-  tabs.forEach(t => {
-    const btn = document.getElementById(`tabAdm${t.charAt(0).toUpperCase() + t.slice(1)}`);
-    const pane = document.getElementById(`paneAdm${t.charAt(0).toUpperCase() + t.slice(1)}`);
-    if (btn) btn.classList.toggle("active", t === tabName);
-    if (pane) pane.classList.toggle("hidden", t !== tabName);
-  });
-
-  if (tabName === "dataset") {
-    loadDatasetTable(dsState.page);
-  } else if (tabName === "diag") {
-    loadAdminDiagnostics();
-  } else if (tabName === "users") {
-    loadUsersTable();
-  } else if (tabName === "ml") {
-    renderMLCompare();
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   ADMIN DATASET IN-PLACE EDITOR
-───────────────────────────────────────────────────────────────── */
-async function loadDatasetTable(page = 1) {
-  if (!isAdmin()) return;
-  dsState.page = Math.max(1, page);
-  const searchInput = document.getElementById("dsSearchInput");
-  const catSelect   = document.getElementById("dsCategorySelect");
-  if (searchInput) dsState.search = searchInput.value.trim();
-  if (catSelect)   dsState.category = catSelect.value;
-
-  const tbody = document.getElementById("dsAppsTableBody");
-  if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted)">Loading records…</td></tr>`;
-
-  try {
-    const qs = new URLSearchParams({
-      page: dsState.page,
-      limit: dsState.limit,
-      search: dsState.search,
-      category: dsState.category
-    });
-    const res = await fetch(`${API}/admin/dataset/apps?${qs}`, {
-      headers: getAuthHeaders()
-    });
-    if (!res.ok) {
-      if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--red)">Failed to load dataset records.</td></tr>`;
-      return;
-    }
-    const data = await res.json();
-    currentDsApps = data.apps || [];
-    dsState.total = data.total || 0;
-    dsState.pages = data.pages || 1;
-
-    // Populate category dropdown if empty
-    if (catSelect && catSelect.options.length <= 1 && data.categories) {
-      data.categories.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c;
-        opt.textContent = c.replace(/_/g, " ");
-        catSelect.appendChild(opt);
-      });
-      // Also populate modal selects
-      ["editAppCategory", "addAppCategory"].forEach(id => {
-        const s = document.getElementById(id);
-        if (s && s.options.length === 0) {
-          data.categories.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c;
-            opt.textContent = c.replace(/_/g, " ");
-            s.appendChild(opt);
-          });
-        }
-      });
-    }
-
-    // Update count pill and pagination
-    const pill = document.getElementById("dsCountPill");
-    if (pill) pill.textContent = `${dsState.total.toLocaleString()} apps found`;
-
-    const pageInfo = document.getElementById("dsPageInfo");
-    if (pageInfo) pageInfo.textContent = `Page ${dsState.page} of ${dsState.pages}`;
-
-    const prevBtn = document.getElementById("dsPrevBtn");
-    const nextBtn = document.getElementById("dsNextBtn");
-    if (prevBtn) prevBtn.disabled = dsState.page <= 1;
-    if (nextBtn) nextBtn.disabled = dsState.page >= dsState.pages;
-
-    if (!currentDsApps.length) {
-      if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted)">No apps match your search.</td></tr>`;
-      return;
-    }
-
-    if (tbody) {
-      tbody.innerHTML = currentDsApps.map(a => `
-        <tr>
-          <td><strong title="${a.App || ''}">${a.App || '—'}</strong></td>
-          <td><span style="font-size:12px;color:var(--text-2)">${(a.Category || '').replace(/_/g, ' ')}</span></td>
-          <td class="th-num"><span style="color:#f59e0b;font-weight:700">★ ${a.Rating != null ? (+a.Rating).toFixed(1) : '—'}</span></td>
-          <td class="th-num">${a.Reviews != null ? fmtNum(a.Reviews) : '0'}</td>
-          <td class="th-num">${a.Installs != null ? fmtNum(a.Installs) : '0'}</td>
-          <td class="th-right"><span class="badge-${(a.Type || 'Free').toLowerCase()}">${a.Type || 'Free'}</span></td>
-          <td class="th-num">${a.Price ? '$' + (+a.Price).toFixed(2) : '$0'}</td>
-          <td style="font-size:12px;color:var(--text-muted)">${a["Last Updated"] || '—'}</td>
-          <td class="th-right">
-            <button type="button" class="ds-action-btn ds-btn-edit" onclick="openEditAppModal('${encodeURIComponent(a.App)}')">✏️ Edit</button>
-            <button type="button" class="ds-action-btn ds-btn-del" onclick="deleteDatasetApp('${encodeURIComponent(a.App)}')">🗑️</button>
-          </td>
-        </tr>
-      `).join("");
-    }
-  } catch (e) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--red)">Error: ${e.message}</td></tr>`;
-  }
-}
-
-function debounceDatasetSearch() {
-  clearTimeout(dsDebounceTimer);
-  dsDebounceTimer = setTimeout(() => {
-    loadDatasetTable(1);
-  }, 300);
-}
-
-function changeDatasetPage(delta) {
-  loadDatasetTable(dsState.page + delta);
-}
-
-function openEditAppModal(encodedName) {
-  const name = decodeURIComponent(encodedName);
-  const app = currentDsApps.find(a => a.App === name);
-  if (!app) return;
-
-  document.getElementById("editOriginalAppName").value = app.App;
-  document.getElementById("editAppName").value = app.App;
-  document.getElementById("editAppCategory").value = app.Category || "";
-  document.getElementById("editAppRating").value = app.Rating != null ? app.Rating : 4.0;
-  document.getElementById("editAppReviews").value = app.Reviews != null ? app.Reviews : 0;
-  document.getElementById("editAppInstalls").value = app.Installs != null ? app.Installs : 0;
-  document.getElementById("editAppSize").value = app.Size != null ? app.Size : 20.0;
-  document.getElementById("editAppType").value = app.Type === "Paid" ? "Paid" : "Free";
-  document.getElementById("editAppPrice").value = app.Price != null ? app.Price : 0;
-
-  const modal = document.getElementById("modalEditApp");
-  const back  = document.getElementById("modalEditAppBackdrop");
-  if (modal) modal.classList.remove("hidden");
-  if (back)  back.classList.remove("hidden");
-}
-
-function closeEditAppModal() {
-  const modal = document.getElementById("modalEditApp");
-  const back  = document.getElementById("modalEditAppBackdrop");
-  if (modal) modal.classList.add("hidden");
-  if (back)  back.classList.add("hidden");
-}
-
-async function handleEditAppSubmit(event) {
-  event.preventDefault();
-  const submitBtn = document.getElementById("editAppSubmitBtn");
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Saving to CSV...";
-
-  const origName = document.getElementById("editOriginalAppName").value;
-  const payload = {
-    originalApp: origName,
-    App: document.getElementById("editAppName").value.trim(),
-    Category: document.getElementById("editAppCategory").value,
-    Rating: parseFloat(document.getElementById("editAppRating").value),
-    Reviews: parseInt(document.getElementById("editAppReviews").value),
-    Installs: parseInt(document.getElementById("editAppInstalls").value),
-    Size: parseFloat(document.getElementById("editAppSize").value),
-    Type: document.getElementById("editAppType").value,
-    Price: parseFloat(document.getElementById("editAppPrice").value),
-  };
-
-  try {
-    const res = await fetch(`${API}/admin/dataset/app`, {
-      method: "PUT",
-      headers: getAuthHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast(`Saved changes for '${payload.App}'!`, "success");
-      closeEditAppModal();
-      await loadDatasetTable(dsState.page);
-      await loadMeta();
-      await renderAll();
-      await loadAdminDiagnostics();
-    } else {
-      alert("Save failed: " + (data.error || "Unknown error"));
-    }
-  } catch (e) {
-    alert("Network error: " + e.message);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Save Changes to Dataset";
-  }
-}
-
-function openAddAppModal() {
-  const form = document.getElementById("addAppForm");
-  if (form) form.reset();
-  const modal = document.getElementById("modalAddApp");
-  const back  = document.getElementById("modalAddAppBackdrop");
-  if (modal) modal.classList.remove("hidden");
-  if (back)  back.classList.remove("hidden");
-}
-
-function closeAddAppModal() {
-  const modal = document.getElementById("modalAddApp");
-  const back  = document.getElementById("modalAddAppBackdrop");
-  if (modal) modal.classList.add("hidden");
-  if (back)  back.classList.add("hidden");
-}
-
-async function handleAddAppSubmit(event) {
-  event.preventDefault();
-  const submitBtn = document.getElementById("addAppSubmitBtn");
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Adding App & Updating CSV...";
-
-  const payload = {
-    App: document.getElementById("addAppName").value.trim(),
-    Category: document.getElementById("addAppCategory").value,
-    Rating: parseFloat(document.getElementById("addAppRating").value),
-    Reviews: parseInt(document.getElementById("addAppReviews").value),
-    Installs: parseInt(document.getElementById("addAppInstalls").value),
-    Size: parseFloat(document.getElementById("addAppSize").value),
-    Type: document.getElementById("addAppType").value,
-    Price: parseFloat(document.getElementById("addAppPrice").value),
-  };
-
-  try {
-    const res = await fetch(`${API}/admin/dataset/app`, {
-      method: "POST",
-      headers: getAuthHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast(`Added '${payload.App}' to dataset!`, "success");
-      closeAddAppModal();
-      await loadDatasetTable(1);
-      await loadMeta();
-      await renderAll();
-      await loadAdminDiagnostics();
-    } else {
-      alert("Failed to add app: " + (data.error || "Unknown error"));
-    }
-  } catch (e) {
-    alert("Network error: " + e.message);
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = "Add App & Rebuild Dashboard Cache";
-  }
-}
-
-async function deleteDatasetApp(encodedName) {
-  const name = decodeURIComponent(encodedName);
-  if (!confirm(`Are you sure you want to permanently delete '${name}' from the dataset?`)) return;
-
-  try {
-    const res = await fetch(`${API}/admin/dataset/app`, {
-      method: "DELETE",
-      headers: getAuthHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify({ App: name })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast(`Deleted '${name}' from dataset.`, "info");
-      await loadDatasetTable(dsState.page);
-      await loadMeta();
-      await renderAll();
-      await loadAdminDiagnostics();
-    } else {
-      alert("Delete failed: " + (data.error || "Unknown error"));
-    }
-  } catch (e) {
-    alert("Network error: " + e.message);
-  }
-}
-
-async function resetDatasetToBackup() {
-  if (!confirm("Are you sure you want to reset the dataset to the pristine Kaggle 2018 dataset? Any manual modifications will be restored.")) return;
-
-  try {
-    const res = await fetch(`${API}/admin/dataset/reset`, {
-      method: "POST",
-      headers: getAuthHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify({})
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast(data.message || "Dataset reset to pristine Kaggle 2018 dataset!", "success");
-      await loadDatasetTable(1);
-      await loadMeta();
-      await renderAll();
-      await loadAdminDiagnostics();
-    } else {
-      alert("Reset failed: " + (data.error || "Unknown error"));
-    }
-  } catch (e) {
-    alert("Network error: " + e.message);
-  }
-}
-
-async function downloadDatasetCsv() {
-  if (!isAdmin()) {
-    showToast("CSV Export is restricted to Admins only.", "warning");
-    return;
-  }
-  try {
-    const params = buildParams();
-    const res = await fetch(`${API}/export?${params}`, {
-      headers: getAuthHeaders()
-    });
-    if (!res.ok) {
-      alert("Failed to export dataset");
-      return;
-    }
-    const blob = await res.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `googleplaystore_admin_export_${Date.now()}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
-    showToast("Dataset exported successfully!", "success");
-  } catch (e) {
-    alert("Export error: " + e.message);
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   ADMIN CONSOLE ACTIONS (DIAGNOSTICS & USERS)
-───────────────────────────────────────────────────────────────── */
-async function loadAdminDiagnostics() {
-  if (!isAdmin()) return;
-  try {
-    const res = await fetch(`${API}/admin/diagnostics`, {
-      headers: getAuthHeaders()
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-
-    const dApps = document.getElementById("diagAppsCount");
-    const dPath = document.getElementById("diagDatasetPath");
-    const dUpt  = document.getElementById("diagUptime");
-    const dPy   = document.getElementById("diagPythonVer");
-    const dMod  = document.getElementById("diagModelCached");
-    const dType = document.getElementById("diagModelType");
-
-    if (dApps) dApps.textContent = (data.dataset.totalApps || 0).toLocaleString();
-    if (dPath) dPath.textContent = data.dataset.filePath ? data.dataset.filePath.split(/[\\/]/).pop() : "googleplaystore.csv";
-    if (dUpt)  {
-      const sec = data.uptime || 0;
-      const m = Math.floor(sec / 60);
-      const s = Math.round(sec % 60);
-      dUpt.textContent = `${m}m ${s}s`;
-    }
-    if (dPy)   dPy.textContent = `Python ${data.system.pythonVersion} · sklearn ${data.system.sklearnVersion}`;
-    if (dMod)  dMod.textContent = data.ml.modelCached ? "Ready (Active)" : "Auto-Initialized";
-    if (dType) dType.textContent = `${(data.ml.availableAlgorithms || []).length} ML Algorithms`;
-
-    // Extended telemetry
-    const dRev = document.getElementById("diagReviewsCount");
-    const dSize = document.getElementById("diagFileSize");
-    const dCats = document.getElementById("diagCategoriesCount");
-    const dEnv  = document.getElementById("diagEnvSpec");
-
-    if (dRev)  dRev.textContent = (data.dataset.reviewsCount || 0).toLocaleString();
-    if (dSize) dSize.textContent = `${data.dataset.fileSizeMb || 0} MB`;
-    if (dCats) dCats.textContent = `${data.dataset.uniqueCategories || 0} categories`;
-    if (dEnv)  dEnv.textContent = `Python ${data.system.pythonVersion} · Pandas ${data.system.pandasVersion} · scikit-learn ${data.system.sklearnVersion}`;
-  } catch (e) {
-    console.error("Admin diagnostics error:", e);
-  }
-}
-
-async function loadUsersTable() {
-  if (!isAdmin()) return;
-  const tbody = document.getElementById("usersTableBody");
-  if (!tbody) return;
-  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:15px;color:var(--text-muted)">Loading user records...</td></tr>`;
-
-  try {
-    const res = await fetch(`${API}/auth/users`, {
-      headers: getAuthHeaders()
-    });
-    if (!res.ok) {
-      tbody.innerHTML = `<tr><td colspan="5" style="color:var(--red);text-align:center">Failed to load users</td></tr>`;
-      return;
-    }
-    const data = await res.json();
-    const users = data.users || [];
-
-    if (users.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">No users registered yet</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = users.map(u => {
-      const isMe = currentUser && currentUser.id === u.id;
-      const nextRole = u.role === "admin" ? "user" : "admin";
-      const actionBtn = isMe
-        ? `<span style="font-size:12px;color:var(--text-muted);font-weight:600">(Your Account)</span>`
-        : `<button class="btn-xs btn-outline" onclick="toggleUserRole('${u.id}', '${nextRole}')">
-             Make ${nextRole.toUpperCase()}
-           </button>`;
-
-      return `
-        <tr>
-          <td><strong>${u.name || "—"}</strong></td>
-          <td><code>${u.email}</code></td>
-          <td>
-            <span class="user-role-badge badge-${u.role}">
-              ${u.role === "admin" ? "👑 Admin" : "👤 User"}
-            </span>
-          </td>
-          <td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}</td>
-          <td class="th-right">${actionBtn}</td>
-        </tr>
-      `;
-    }).join("");
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--red);text-align:center">Error: ${e.message}</td></tr>`;
-  }
-}
-
-async function toggleUserRole(userId, newRole) {
-  if (!confirm(`Are you sure you want to change this user's role to ${newRole.toUpperCase()}?`)) return;
-  try {
-    const res = await fetch(`${API}/auth/users/${userId}/role`, {
-      method: "PATCH",
-      headers: getAuthHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify({ role: newRole })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast(`User role updated to ${newRole}`, "success");
-      loadUsersTable();
-    } else {
-      alert(data.error || "Failed to update role");
-    }
-  } catch (e) {
-    alert("Network error: " + e.message);
-  }
-}
-
-function handleFileSelected(event) {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-  selectedUploadFile = file;
-
-  const preview = document.getElementById("uploadPreview");
-  const nameEl  = document.getElementById("upFilename");
-  const sizeEl  = document.getElementById("upFilesize");
-  const statusEl = document.getElementById("uploadStatus");
-
-  if (preview) preview.classList.remove("hidden");
-  if (nameEl)  nameEl.textContent = file.name;
-  if (sizeEl)  sizeEl.textContent = (file.size / 1024).toFixed(1) + " KB";
-  if (statusEl) statusEl.classList.add("hidden");
-}
-
-async function submitDatasetUpload() {
-  if (!selectedUploadFile) {
-    alert("Please select a CSV file first.");
-    return;
-  }
-  const btn = document.getElementById("upSubmitBtn");
-  const statusEl = document.getElementById("uploadStatus");
-  btn.disabled = true;
-  btn.textContent = "Uploading & Rebuilding Cache...";
-
-  const formData = new FormData();
-  formData.append("file", selectedUploadFile);
-
-  try {
-    const res = await fetch(`${API}/admin/upload_dataset`, {
-      method: "POST",
-      headers: getAuthHeaders(),
-      body: formData
-    });
-    const data = await res.json();
-    if (res.ok) {
-      statusEl.className = "upload-status upload-success";
-      statusEl.textContent = `Success! Loaded ${data.appsCount.toLocaleString()} apps from new dataset. Dashboard reloaded.`;
-      statusEl.classList.remove("hidden");
-      showToast("Dataset successfully replaced!", "success");
-
-      await loadMeta();
-      await renderAll();
-      await loadAdminDiagnostics();
-      await loadDatasetTable(1);
-    } else {
-      statusEl.className = "upload-status upload-error";
-      statusEl.textContent = `Upload failed: ${data.error}`;
-      statusEl.classList.remove("hidden");
-    }
-  } catch (e) {
-    statusEl.className = "upload-status upload-error";
-    statusEl.textContent = `Network error: ${e.message}`;
-    statusEl.classList.remove("hidden");
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload &amp; Reload Application`;
-  }
-}
-
-async function triggerAdminRetrain() {
-  if (!isAdmin()) {
-    alert("Admin privileges required to trigger retraining.");
-    return;
-  }
-  const btn = document.getElementById("retrainBtn");
-  const splitSelect = document.getElementById("retrainTestSplit");
-  const testSplit = splitSelect ? parseFloat(splitSelect.value) : 0.2;
-
-  btn.disabled = true;
-  btn.innerHTML = `Training 6 Algorithms (${Math.round((1-testSplit)*100)}/${Math.round(testSplit*100)} split)...`;
-
-  try {
-    const params = buildParams();
-    const res = await fetch(`${API}/mining/ml_retrain?${params}`, {
-      method: "POST",
-      headers: getAuthHeaders({ "Content-Type": "application/json" }),
-      body: JSON.stringify({ testSize: testSplit })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast(`Retrained all 6 models! Best: ${data.bestAlgorithm} (${data.bestAccuracy}%)`, "success");
-      await renderMLCompare();
-      loadAdminDiagnostics();
-    } else {
-      alert("Retraining failed: " + (data.error || "Unknown error"));
-    }
-  } catch (e) {
-    alert("Retraining error: " + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Retrain 6 Models`;
-  }
-}
-
-// Wire Export CSV button
-const exportBtnEl = document.getElementById("exportBtn");
-if (exportBtnEl) {
-  exportBtnEl.addEventListener("click", async () => {
-    if (!isAdmin()) {
-      showToast("CSV Export is restricted to Admins only. Please sign in as an Admin.", "warning");
-      openAdminPortalModal();
-      return;
-    }
-    downloadDatasetCsv();
-  });
-}
-
-// Expose handlers globally for HTML events
-window.openAuthModal = openAuthModal;
-window.closeAuthModal = closeAuthModal;
-window.openAdminPortalModal = openAdminPortalModal;
-window.fillAdminCredsAndLogin = fillAdminCredsAndLogin;
-window.switchAuthTab = switchAuthTab;
-window.toggleAuthDropdown = toggleAuthDropdown;
-window.quickLogin = quickLogin;
-window.handleLoginForm = handleLoginForm;
-window.handleRegisterForm = handleRegisterForm;
 window.handleLogout = handleLogout;
-window.handlePortalUserLogin = handlePortalUserLogin;
-window.handlePortalAdminLogin = handlePortalAdminLogin;
-window.handlePortalUserRegister = handlePortalUserRegister;
-window.togglePortalUserRegister = togglePortalUserRegister;
-window.switchAdminTab = switchAdminTab;
-window.triggerAdminRetrain = triggerAdminRetrain;
-window.loadUsersTable = loadUsersTable;
-window.toggleUserRole = toggleUserRole;
-window.handleFileSelected = handleFileSelected;
-window.submitDatasetUpload = submitDatasetUpload;
-window.loadDatasetTable = loadDatasetTable;
-window.debounceDatasetSearch = debounceDatasetSearch;
-window.changeDatasetPage = changeDatasetPage;
-window.openEditAppModal = openEditAppModal;
-window.closeEditAppModal = closeEditAppModal;
-window.handleEditAppSubmit = handleEditAppSubmit;
-window.openAddAppModal = openAddAppModal;
-window.closeAddAppModal = closeAddAppModal;
-window.handleAddAppSubmit = handleAddAppSubmit;
-window.deleteDatasetApp = deleteDatasetApp;
-window.resetDatasetToBackup = resetDatasetToBackup;
-window.downloadDatasetCsv = downloadDatasetCsv;
 
-/* ─────────────────────────────────────────────────────────────────
-   INIT
-───────────────────────────────────────────────────────────────── */
 async function init() {
-  // Teleport all chip-dropdowns to <body> FIRST
   initDropdowns();
+  const ok = await checkUserAuth();
+  if (!ok) return;
 
-  // Set initial theme icon
-  document.querySelector(".icon-sun").classList.remove("hidden");
-  document.querySelector(".icon-moon").classList.add("hidden");
-
-  // Initialize Authentication & RBAC
-  await initAuth();
+  const sun = document.querySelector(".icon-sun");
+  const moon = document.querySelector(".icon-moon");
+  if (sun && moon) {
+    const theme = document.documentElement.getAttribute("data-theme") || "dark";
+    if (theme === "dark") {
+      sun.classList.remove("hidden");
+      moon.classList.add("hidden");
+    } else {
+      sun.classList.add("hidden");
+      moon.classList.remove("hidden");
+    }
+  }
 
   await loadMeta();
 
-  // Populate prediction category dropdown from metaData
   const pCat = document.getElementById("pCategory");
   if (pCat && metaData.categories) {
     metaData.categories.forEach(c => {
@@ -2926,14 +1653,10 @@ async function init() {
   }
 
   await renderAll();
-
-  if (isAdmin()) {
-    loadAdminDiagnostics();
-    loadUsersTable();
-    loadDatasetTable(1);
-    renderMLCompare();
-  }
 }
 
-init();
-
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}

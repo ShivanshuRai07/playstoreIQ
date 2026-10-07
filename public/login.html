@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayStoreIQ — Authentication Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 15%, #1e293b 0%, #0f172a 60%, #090d16 100%);
+      font-family: 'Inter', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f1f5f9;
+    }
+    .login-wrapper {
+      max-width: 1080px;
+      width: 100%;
+      padding: 30px 20px;
+      margin: auto;
+    }
+    .login-brand-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .lb-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .lb-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: 0 4px 18px rgba(37,99,235,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .lb-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      margin: 0;
+    }
+    .lb-title strong {
+      background: linear-gradient(135deg, #60a5fa, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .lb-sub {
+      font-size: 15px;
+      color: #94a3b8;
+      margin: 0 0 12px;
+    }
+    .lb-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+    .lb-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    .login-alert {
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      font-size: 13.5px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .login-alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+    .login-alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+    .login-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+    @media (max-width: 860px) {
+      .login-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .portal-box {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 18px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .user-portal {
+      border-color: rgba(59, 130, 246, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(37, 99, 235, 0.1);
+    }
+    .user-portal:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(37, 99, 235, 0.2);
+    }
+    .admin-portal {
+      border-color: rgba(245, 158, 11, 0.45);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(245, 158, 11, 0.15);
+    }
+    .admin-portal:hover {
+      border-color: rgba(245, 158, 11, 0.7);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(245, 158, 11, 0.25);
+    }
+    .portal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+    .pill-user {
+      background: rgba(37, 99, 235, 0.2);
+      color: #93c5fd;
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .pill-admin {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .portal-h {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 8px;
+    }
+    .portal-p {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0 0 16px;
+    }
+    .portal-features {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12.5px;
+      color: #cbd5e1;
+    }
+    .portal-features .f-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .user-portal .f-item span { color: #38bdf8; font-weight: 700; }
+    .admin-portal .f-item span { color: #fbbf24; font-weight: 700; }
+
+    .portal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .portal-form label {
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .portal-form input {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13.5px;
+      outline: none;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    .user-portal input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+    .admin-portal input:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+    }
+    .btn-submit-user {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+      transition: all 0.15s;
+    }
+    .btn-submit-user:hover {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      transform: translateY(-1px);
+    }
+    .btn-submit-admin {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+      transition: all 0.15s;
+    }
+    .btn-submit-admin:hover {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      transform: translateY(-1px);
+    }
+    .btn-quick-demo {
+      width: 100%;
+      border-radius: 8px;
+      padding: 9px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px dashed rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
+      margin-top: 10px;
+      transition: all 0.15s;
+    }
+    .btn-quick-demo.user-demo:hover {
+      background: rgba(37, 99, 235, 0.15);
+      border-color: #3b82f6;
+      color: #93c5fd;
+    }
+    .btn-quick-demo.admin-demo:hover {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: #f59e0b;
+      color: #fcd34d;
+    }
+    .admin-pwd-callout {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #fcd34d;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-pwd-callout strong {
+      color: #ffffff;
+      font-family: monospace;
+      font-size: 13px;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <!-- Header -->
+    <header class="login-brand-header">
+      <div class="lb-logo">
+        <div class="lb-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <h1 class="lb-title">PlayStore<strong>IQ</strong></h1>
+      </div>
+      <p class="lb-sub">Unified App Market Analytics &amp; Machine Learning Intelligence</p>
+      <div class="lb-badge">
+        <span class="lb-dot"></span> Kaggle 2018 Real Google Play Store Dataset (10,841 Apps)
+      </div>
+    </header>
+
+    <!-- Global Alert -->
+    <div class="login-alert hidden" id="loginAlert"></div>
+
+    <!-- Dual Portals Grid -->
+    <div class="login-cards-grid">
+
+      <!-- ─── 👤 USER PORTAL ─── -->
+      <div class="portal-box user-portal" id="userPortalBox">
+        <div class="portal-pill pill-user">
+          <span>👤</span> Standard User Portal
+        </div>
+        <h2 class="portal-h">Analyst &amp; Business Intelligence</h2>
+        <p class="portal-p">Explore Play Store analytics, market category trends, sentiments, and ML rating predictions. 100% clean of admin controls.</p>
+
+        <div class="portal-features">
+          <div class="f-item"><span>✓</span> Complete Market BI Analytics &amp; KPIs</div>
+          <div class="f-item"><span>✓</span> Interactive AI Rating Predictor Tool</div>
+          <div class="f-item"><span>✓</span> Sentiment &amp; Cluster Visualizations</div>
+          <div class="f-item"><span>✓</span> Direct Access to <strong>user.html</strong></div>
+        </div>
+
+        <form class="portal-form" id="userForm" onsubmit="handleUserLogin(event)">
+          <div>
+            <label for="userEmailInput">Username / Email</label>
+            <input type="text" id="userEmailInput" value="user@playstore.io" placeholder="user or user@playstore.io" required />
+          </div>
+          <div>
+            <label for="userPassInput">Password</label>
+            <input type="password" id="userPassInput" value="user" placeholder="user" required />
+          </div>
+          <button type="submit" class="btn-submit-user" id="userSubmitBtn">
+            Sign In to User Dashboard
+          </button>
+        </form>
+
+        <button type="button" class="btn-quick-demo user-demo" onclick="quickLogin('user')">
+          ⚡ 1-Click Login as User
+        </button>
+      </div>
+
+      <!-- ─── 👑 ADMIN PORTAL ─── -->
+      <div class="portal-box admin-portal" id="adminPortalBox">
+        <div class="portal-pill pill-admin">
+          <span>👑</span> Administrator Portal
+        </div>
+        <h2 class="portal-h">System Admin &amp; Machine Learning Lab</h2>
+        <p class="portal-p">Exclusive administrator suite for ML model benchmarking, on-demand retraining, and live CSV dataset editing.</p>
+
+        <div class="portal-features">
+          <div class="f-item"><span>🤖</span> 6 ML Algorithm Comparisons &amp; Radar Charts</div>
+          <div class="f-item"><span>📝</span> Live In-Place Dataset Editor (Edit CSV records)</div>
+          <div class="f-item"><span>↺</span> Multi-Model Retraining Engine on Active Data</div>
+          <div class="f-item"><span>⚙️</span> Direct Access to <strong>admin.html</strong></div>
+        </div>
+
+        <form class="portal-form" id="adminForm" onsubmit="handleAdminLogin(event)">
+          <div>
+            <label for="adminEmailInput">Admin Username / Email</label>
+            <input type="text" id="adminEmailInput" value="admin" placeholder="admin or admin@playstore.io" required />
+          </div>
+          <div>
+            <label for="adminPassInput">Admin Password</label>
+            <input type="password" id="adminPassInput" value="admin" placeholder="admin" required />
+          </div>
+          <button type="submit" class="btn-submit-admin" id="adminSubmitBtn">
+            👑 Sign In as Administrator
+          </button>
+        </form>
+
+        <button type="button" class="btn-quick-demo admin-demo" onclick="quickLogin('admin')">
+          ⚡ 1-Click Login as Admin
+        </button>
+
+        <div class="admin-pwd-callout">
+          <span>🔑</span> Admin Password required: <strong>admin</strong>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const API = (window.location.protocol === "file:" || window.location.port === "5500" || window.location.port === "3000")
+      ? "http://127.0.0.1:5000/api"
+      : "/api";
+
+    function showAlert(msg, type = "error") {
+      const el = document.getElementById("loginAlert");
+      if (!el) return;
+      el.textContent = msg;
+      el.className = `login-alert login-alert-${type}`;
+      el.classList.remove("hidden");
+    }
+
+    function clearAlert() {
+      const el = document.getElementById("loginAlert");
+      if (el) el.classList.add("hidden");
+    }
+
+    async function handleUserLogin(e) {
+      e.preventDefault();
+      clearAlert();
+      const email = document.getElementById("userEmailInput").value.trim();
+      const password = document.getElementById("userPassInput").value.trim();
+      const btn = document.getElementById("userSubmitBtn");
+      btn.disabled = true;
+      btn.textContent = "Signing in...";
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("playstore_iq_token", data.token);
+          localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
+          showAlert(`Welcome, ${data.user.name}! Redirecting to User Page...`, "success");
+          setTimeout(() => {
+            window.location.href = "/user.html";
+          }, 400);
+        } else {
+          showAlert(data.error || "User login failed. Please check credentials.", "error");
+        }
+      } catch (err) {
+        showAlert("Network error: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign In to User Dashboard";
+      }
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      clearAlert();
+      const email = document.getElementById("adminEmailInput").value.trim();
+      const password = document.getElementById("adminPassInput").value.trim();
+      const btn = document.getElementById("adminSubmitBtn");
+      btn.disabled = true;
+      btn.textContent = "Authenticating...";
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          if (data.user.role !== "admin") {
+            showAlert("Access Denied: Account is not an Administrator. Please use the User Portal on the left.", "error");
+            return;
+          }
+          localStorage.setItem("playstore_iq_token", data.token);
+          localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
+          showAlert(`👑 Welcome, Administrator! Redirecting to Admin Page...`, "success");
+          setTimeout(() => {
+            window.location.href = "/admin.html";
+          }, 400);
+        } else {
+          showAlert(data.error || "Admin login failed. Password must be 'admin'.", "error");
+        }
+      } catch (err) {
+        showAlert("Network error: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "👑 Sign In as Administrator";
+      }
+    }
+
+    async function quickLogin(role) {
+      clearAlert();
+      const creds = role === "admin"
+        ? { email: "admin", password: "admin" }
+        : { email: "user", password: "user" };
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(creds)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("playstore_iq_token", data.token);
+          localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
+          if (data.user.role === "admin") {
+            showAlert("👑 Logged in as Admin! Redirecting to admin.html...", "success");
+            setTimeout(() => { window.location.href = "/admin.html"; }, 350);
+          } else {
+            showAlert("👤 Logged in as User! Redirecting to user.html...", "success");
+            setTimeout(() => { window.location.href = "/user.html"; }, 350);
+          }
+        } else {
+          showAlert(data.error || "Quick login failed", "error");
+        }
+      } catch (err) {
+        showAlert("Connection error: " + err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>
