@@ -74,10 +74,12 @@
   ══════════════════════════════════════════════ -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-        <span style="font-size:16px;">👑</span>
-      </div>
-      <span class="brand-name sidebar-text">PlayStore<strong>Admin</strong></span>
+      <a href="/" title="Return to PlayStoreIQ Home" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
+        <div class="brand-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <span style="font-size:16px;">👑</span>
+        </div>
+        <span class="brand-name sidebar-text">PlayStore<strong>Admin</strong></span>
+      </a>
     </div>
 
     <nav class="sidebar-nav" role="navigation" aria-label="Admin navigation">
@@ -152,6 +154,12 @@
 
         <!-- Admin Profile Pill & Direct Logout -->
         <div class="admin-topbar-profile">
+          <a href="/" class="btn-admin-logout" style="text-decoration:none;" title="Return to Landing Page">
+            🏠 Home
+          </a>
+          <a href="/analyst.html" class="btn-admin-logout" style="text-decoration:none;" title="Open Analyst Workspace">
+            📊 Analyst
+          </a>
           <div class="admin-crown-pill">
             <span>👑</span>
             <span id="adminNameLabel">Administrator</span>

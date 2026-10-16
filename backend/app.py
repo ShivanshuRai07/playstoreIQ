@@ -1712,7 +1712,13 @@ FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "fr
 
 @app.route("/")
 def index():
-    return send_from_directory(FRONTEND_DIR, "login.html")
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+
+@app.route("/index")
+@app.route("/index.html")
+def serve_index():
+    return send_from_directory(FRONTEND_DIR, "index.html")
 
 
 @app.route("/login")
