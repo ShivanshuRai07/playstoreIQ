@@ -1,414 +1,685 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PlayStoreIQ — Authentication Portal</title>
+  <title>PlayStoreIQ — Sign In</title>
+  <meta name="description" content="Sign in to PlayStoreIQ Data Warehousing & Analytics Platform." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    body {
+    :root {
+      --bg: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --primary: #0D9488;
+      --primary-hover: #0F766E;
+      --primary-light: #CCFBF1;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg: #090D16;
+      --card-bg: #111827;
+      --border: #1F2937;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --primary: #14B8A6;
+      --primary-hover: #2DD4BF;
+      --primary-light: rgba(20, 184, 166, 0.15);
+      --shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
-      background: radial-gradient(circle at 50% 15%, #1e293b 0%, #0f172a 60%, #090d16 100%);
-      font-family: 'Inter', system-ui, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #f1f5f9;
     }
-    .login-wrapper {
-      max-width: 1080px;
-      width: 100%;
-      padding: 30px 20px;
-      margin: auto;
-    }
-    .login-brand-header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .lb-logo {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-    .lb-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #2563eb, #7c3aed);
-      box-shadow: 0 4px 18px rgba(37,99,235,0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-    }
-    .lb-title {
-      font-size: 32px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: #ffffff;
-      margin: 0;
-    }
-    .lb-title strong {
-      background: linear-gradient(135deg, #60a5fa, #c084fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .lb-sub {
-      font-size: 15px;
-      color: #94a3b8;
-      margin: 0 0 12px;
-    }
-    .lb-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 999px;
-      padding: 5px 14px;
-      font-size: 12px;
-      color: #cbd5e1;
-      font-weight: 500;
-    }
-    .lb-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-    }
-    .login-alert {
-      padding: 12px 16px;
-      border-radius: 10px;
-      margin-bottom: 24px;
-      font-size: 13.5px;
-      font-weight: 500;
-      text-align: center;
-    }
-    .login-alert-error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-    }
-    .login-alert-success {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #6ee7b7;
-    }
-    .login-cards-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-    }
-    @media (max-width: 860px) {
-      .login-cards-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    .portal-box {
-      background: rgba(30, 41, 59, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 18px;
-      padding: 32px 28px;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .user-portal {
-      border-color: rgba(59, 130, 246, 0.35);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(37, 99, 235, 0.1);
-    }
-    .user-portal:hover {
-      border-color: rgba(59, 130, 246, 0.6);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(37, 99, 235, 0.2);
-    }
-    .admin-portal {
-      border-color: rgba(245, 158, 11, 0.45);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 25px rgba(245, 158, 11, 0.15);
-    }
-    .admin-portal:hover {
-      border-color: rgba(245, 158, 11, 0.7);
-      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), 0 0 35px rgba(245, 158, 11, 0.25);
-    }
-    .portal-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      margin-bottom: 14px;
-      align-self: flex-start;
-    }
-    .pill-user {
-      background: rgba(37, 99, 235, 0.2);
-      color: #93c5fd;
-      border: 1px solid rgba(59, 130, 246, 0.4);
-    }
-    .pill-admin {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fcd34d;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-    .portal-h {
-      font-size: 20px;
-      font-weight: 700;
-      color: #ffffff;
-      margin: 0 0 8px;
-    }
-    .portal-p {
-      font-size: 13.5px;
-      color: #94a3b8;
-      line-height: 1.5;
-      margin: 0 0 16px;
-    }
-    .portal-features {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 12.5px;
-      color: #cbd5e1;
-    }
-    .portal-features .f-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .user-portal .f-item span { color: #38bdf8; font-weight: 700; }
-    .admin-portal .f-item span { color: #fbbf24; font-weight: 700; }
 
-    .portal-form {
+    body {
+      background-color: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
-    .portal-form label {
-      color: #cbd5e1;
-      font-size: 12px;
-      font-weight: 600;
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 36px 32px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Brand Header */
+    .brand-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #FFFFFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
       margin-bottom: 4px;
-      display: block;
     }
-    .portal-form input {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      border-radius: 8px;
-      padding: 10px 12px;
+
+    .brand-subtitle {
       font-size: 13.5px;
-      outline: none;
-      box-sizing: border-box;
-      width: 100%;
+      color: var(--text-muted);
+      margin-bottom: 24px;
     }
-    .user-portal input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
-    }
-    .admin-portal input:focus {
-      border-color: #f59e0b;
-      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
-    }
-    .btn-submit-user {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #ffffff;
-      border: none;
+
+    /* Alert Banner */
+    .alert-banner {
       border-radius: 8px;
-      padding: 11px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-      transition: all 0.15s;
-    }
-    .btn-submit-user:hover {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      transform: translateY(-1px);
-    }
-    .btn-submit-admin {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 11px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
-      transition: all 0.15s;
-    }
-    .btn-submit-admin:hover {
-      background: linear-gradient(135deg, #fbbf24, #f59e0b);
-      transform: translateY(-1px);
-    }
-    .btn-quick-demo {
-      width: 100%;
-      border-radius: 8px;
-      padding: 9px;
+      padding: 10px 14px;
       font-size: 12.5px;
-      font-weight: 600;
-      cursor: pointer;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px dashed rgba(255, 255, 255, 0.2);
-      color: #cbd5e1;
-      margin-top: 10px;
-      transition: all 0.15s;
-    }
-    .btn-quick-demo.user-demo:hover {
-      background: rgba(37, 99, 235, 0.15);
-      border-color: #3b82f6;
-      color: #93c5fd;
-    }
-    .btn-quick-demo.admin-demo:hover {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: #f59e0b;
-      color: #fcd34d;
-    }
-    .admin-pwd-callout {
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 12px;
-      color: #fcd34d;
-      margin-top: 14px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      text-align: left;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .admin-pwd-callout strong {
-      color: #ffffff;
-      font-family: monospace;
+    .alert-banner.hidden { display: none; }
+    .alert-banner.error {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #991B1B;
+    }
+    [data-theme="dark"] .alert-banner.error {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #FCA5A5;
+    }
+    .alert-banner.success {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+    }
+    [data-theme="dark"] .alert-banner.success {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #6EE7B7;
+    }
+
+    /* Form Styles */
+    .form-group {
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
       font-size: 13px;
-      background: rgba(0,0,0,0.3);
-      padding: 2px 6px;
-      border-radius: 4px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 42px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    .toggle-password-btn {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-password-btn:hover {
+      color: var(--text);
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 44px;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.05s ease;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+    }
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+    .btn-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* Quick Demo Access Section */
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 24px 0 16px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      padding: 0 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .demo-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 6px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      background: var(--bg);
+    }
+    .demo-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    .demo-card:active {
+      transform: translateY(0);
+    }
+
+    .demo-icon {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .demo-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.1px;
+    }
+
+    /* Role card color accents */
+
+    .demo-analyst {
+      background: #EFF6FF;
+      border-color: #BFDBFE;
+      color: #2563EB;
+    }
+    [data-theme="dark"] .demo-analyst {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.3);
+      color: #60A5FA;
+    }
+
+    .demo-admin {
+      background: #FAF5FF;
+      border-color: #E9D5FF;
+      color: #7C3AED;
+    }
+    [data-theme="dark"] .demo-admin {
+      background: rgba(168, 85, 247, 0.12);
+      border-color: rgba(168, 85, 247, 0.3);
+      color: #C084FC;
+    }
+
+    /* Links Footer */
+    .links-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .link-teal {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .link-teal:hover {
+      text-decoration: underline;
+    }
+
+    .link-muted {
+      color: var(--text-muted);
+      font-size: 12.5px;
+    }
+    .link-muted a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link-muted a:hover {
+      text-decoration: underline;
+    }
+
+    .reset-app-link {
+      margin-top: 24px;
+      color: #DC2626;
+      font-size: 12px;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-block;
+      transition: opacity 0.15s ease;
+    }
+    .reset-app-link:hover {
+      opacity: 0.8;
+    }
+    [data-theme="dark"] .reset-app-link {
+      color: #EF4444;
+    }
+
+    /* Registration & Info Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 420px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .modal-close-btn:hover {
+      color: var(--text);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .modal-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .theme-toggle-fixed {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .theme-toggle-fixed:hover {
+      color: var(--text);
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px 12px;
+      }
+      .login-card {
+        padding: 24px 18px;
+        border-radius: 14px;
+      }
+      .brand-title {
+        font-size: 20px;
+      }
+      .demo-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .demo-card {
+        padding: 10px 4px;
+      }
+      .modal-box {
+        padding: 20px 16px;
+        margin: 12px;
+      }
+      .theme-toggle-fixed {
+        top: 12px;
+        right: 12px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="login-wrapper">
-    <!-- Header -->
-    <header class="login-brand-header">
-      <div class="lb-logo">
-        <div class="lb-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-        <h1 class="lb-title">PlayStore<strong>IQ</strong></h1>
+  <!-- Theme Toggle Button -->
+  <button type="button" class="theme-toggle-fixed" id="themeToggleBtn" title="Toggle theme">
+    <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+
+  <div class="login-container">
+    <div class="login-card">
+
+      <!-- Logo / Avatar -->
+      <div class="brand-avatar" title="PlayStoreIQ">
+        IQ
       </div>
-      <p class="lb-sub">Unified App Market Analytics &amp; Machine Learning Intelligence</p>
-      <div class="lb-badge">
-        <span class="lb-dot"></span> Kaggle 2018 Real Google Play Store Dataset (10,841 Apps)
-      </div>
-    </header>
 
-    <!-- Global Alert -->
-    <div class="login-alert hidden" id="loginAlert"></div>
+      <!-- Header -->
+      <h1 class="brand-title">Welcome back</h1>
+      <p class="brand-subtitle">Sign in to your account</p>
 
-    <!-- Dual Portals Grid -->
-    <div class="login-cards-grid">
+      <!-- Alert Banner -->
+      <div id="loginAlert" class="alert-banner hidden"></div>
 
-      <!-- ─── 👤 USER PORTAL ─── -->
-      <div class="portal-box user-portal" id="userPortalBox">
-        <div class="portal-pill pill-user">
-          <span>👤</span> Standard User Portal
-        </div>
-        <h2 class="portal-h">Analyst &amp; Business Intelligence</h2>
-        <p class="portal-p">Explore Play Store analytics, market category trends, sentiments, and ML rating predictions. 100% clean of admin controls.</p>
-
-        <div class="portal-features">
-          <div class="f-item"><span>✓</span> Complete Market BI Analytics &amp; KPIs</div>
-          <div class="f-item"><span>✓</span> Interactive AI Rating Predictor Tool</div>
-          <div class="f-item"><span>✓</span> Sentiment &amp; Cluster Visualizations</div>
-          <div class="f-item"><span>✓</span> Direct Access to <strong>user.html</strong></div>
-        </div>
-
-        <form class="portal-form" id="userForm" onsubmit="handleUserLogin(event)">
-          <div>
-            <label for="userEmailInput">Username / Email</label>
-            <input type="text" id="userEmailInput" value="user@playstore.io" placeholder="user or user@playstore.io" required />
+      <!-- Main Login Form -->
+      <form id="loginForm" onsubmit="handleFormLogin(event)">
+        <!-- Email Input -->
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="loginEmail"
+              class="form-input"
+              placeholder="analyst@playstore.io"
+              value="analyst@playstore.io"
+              autocomplete="email"
+              required
+            />
           </div>
-          <div>
-            <label for="userPassInput">Password</label>
-            <input type="password" id="userPassInput" value="user" placeholder="user" required />
-          </div>
-          <button type="submit" class="btn-submit-user" id="userSubmitBtn">
-            Sign In to User Dashboard
-          </button>
-        </form>
+        </div>
 
-        <button type="button" class="btn-quick-demo user-demo" onclick="quickLogin('user')">
-          ⚡ 1-Click Login as User
+        <!-- Password Input -->
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="loginPassword"
+              class="form-input"
+              placeholder="••••••••"
+              value="analyst"
+              autocomplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              class="toggle-password-btn"
+              id="togglePasswordBtn"
+              aria-label="Toggle password visibility"
+              title="Show/Hide password"
+            >
+              <svg id="eyeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Sign In
         </button>
+      </form>
+
+      <!-- Quick Demo Access Divider -->
+      <div class="divider">
+        <span>Quick Demo Access</span>
       </div>
 
-      <!-- ─── 👑 ADMIN PORTAL ─── -->
-      <div class="portal-box admin-portal" id="adminPortalBox">
-        <div class="portal-pill pill-admin">
-          <span>👑</span> Administrator Portal
-        </div>
-        <h2 class="portal-h">System Admin &amp; Machine Learning Lab</h2>
-        <p class="portal-p">Exclusive administrator suite for ML model benchmarking, on-demand retraining, and live CSV dataset editing.</p>
-
-        <div class="portal-features">
-          <div class="f-item"><span>🤖</span> 6 ML Algorithm Comparisons &amp; Radar Charts</div>
-          <div class="f-item"><span>📝</span> Live In-Place Dataset Editor (Edit CSV records)</div>
-          <div class="f-item"><span>↺</span> Multi-Model Retraining Engine on Active Data</div>
-          <div class="f-item"><span>⚙️</span> Direct Access to <strong>admin.html</strong></div>
+      <!-- 2 Quick Demo Access Cards -->
+      <div class="demo-grid">
+        <!-- 1. Business Analyst Card -->
+        <div class="demo-card demo-analyst" onclick="triggerQuickDemo('analyst')" role="button" tabindex="0" title="Sign in as Business / Market Analyst">
+          <div class="demo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+          </div>
+          <span class="demo-label">Business Analyst</span>
         </div>
 
-        <form class="portal-form" id="adminForm" onsubmit="handleAdminLogin(event)">
-          <div>
-            <label for="adminEmailInput">Admin Username / Email</label>
-            <input type="text" id="adminEmailInput" value="admin" placeholder="admin or admin@playstore.io" required />
+        <!-- 2. Administrator Card -->
+        <div class="demo-card demo-admin" onclick="triggerQuickDemo('admin')" role="button" tabindex="0" title="Sign in as System Administrator">
+          <div class="demo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
           </div>
-          <div>
-            <label for="adminPassInput">Admin Password</label>
-            <input type="password" id="adminPassInput" value="admin" placeholder="admin" required />
-          </div>
-          <button type="submit" class="btn-submit-admin" id="adminSubmitBtn">
-            👑 Sign In as Administrator
-          </button>
-        </form>
+          <span class="demo-label">Administrator</span>
+        </div>
+      </div>
 
-        <button type="button" class="btn-quick-demo admin-demo" onclick="quickLogin('admin')">
-          ⚡ 1-Click Login as Admin
-        </button>
-
-        <div class="admin-pwd-callout">
-          <span>🔑</span> Admin Password required: <strong>admin</strong>
+      <!-- Bottom Links -->
+      <div class="links-footer">
+        <div>
+          <a class="link-teal" onclick="openForgotModal()">Forgot password?</a>
+        </div>
+        <div class="link-muted">
+          Don't have an account? <a onclick="openRegisterModal()">Create Account</a>
         </div>
       </div>
 
     </div>
+
+    <!-- Red Footer Reset Link -->
+    <div style="text-align: center;">
+      <a class="reset-app-link" onclick="resetAppState()">Trouble logging in? Click here to Reset App</a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL 1: CREATE ACCOUNT (REGISTRATION)
+  ══════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="registerModal">
+    <div class="modal-box">
+      <button type="button" class="modal-close-btn" onclick="closeRegisterModal()">&times;</button>
+      <h2 class="modal-title">Create an Account</h2>
+      <p class="modal-desc">Register a new profile on PlayStoreIQ.</p>
+
+      <div id="registerAlert" class="alert-banner hidden"></div>
+
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group">
+          <label class="form-label" for="regName">Full Name</label>
+          <input type="text" id="regName" class="form-input" placeholder="e.g. Alex Rivera" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" class="form-input" placeholder="alex@playstore.io" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regPass">Password (min 6 characters)</label>
+          <input type="password" id="regPass" class="form-input" placeholder="••••••••" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="regRole">Role</label>
+          <select id="regRole" class="form-input" style="background:var(--card-bg);">
+            <option value="analyst">Business Analyst (DWM Analytics Suite)</option>
+            <option value="admin">Administrator (Warehouse Governance)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-submit" id="regBtn">Create Account &amp; Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MODAL 2: FORGOT PASSWORD / CREDENTIALS CHEATSHEET
+  ══════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal-box">
+      <button type="button" class="modal-close-btn" onclick="closeForgotModal()">&times;</button>
+      <h2 class="modal-title">Demo Account Credentials</h2>
+      <p class="modal-desc">PlayStoreIQ is pre-seeded with analyst and administrator profiles:</p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;text-align:left;font-size:13px;margin-bottom:18px;">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
+          <strong>💼 Business Analyst (DWM Platform):</strong><br />
+          Email: <code style="color:var(--primary)">analyst@playstore.io</code> &middot; Password: <code>analyst</code>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;">
+          <strong>👑 Administrator (System Governance):</strong><br />
+          Email: <code style="color:var(--primary)">admin@playstore.io</code> &middot; Password: <code>admin</code>
+        </div>
+      </div>
+
+      <button type="button" class="btn-submit" onclick="closeForgotModal()">Got it</button>
+    </div>
   </div>
 
   <script>
+    "use strict";
+
     const API = (window.location.protocol === "file:" || window.location.port === "5500" || window.location.port === "3000")
       ? "http://127.0.0.1:5000/api"
       : "/api";
 
+    /* ── Theme Support ── */
+    const themeBtn = document.getElementById("themeToggleBtn");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        const cur = document.documentElement.getAttribute("data-theme") || "light";
+        const next = cur === "light" ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", next);
+      });
+    }
+
+    /* ── Password Visibility Toggle ── */
+    const togglePassBtn = document.getElementById("togglePasswordBtn");
+    const passInput = document.getElementById("loginPassword");
+    if (togglePassBtn && passInput) {
+      togglePassBtn.addEventListener("click", () => {
+        const isPass = passInput.type === "password";
+        passInput.type = isPass ? "text" : "password";
+        togglePassBtn.innerHTML = isPass
+          ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+          : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+      });
+    }
+
+    /* ── Alert Helpers ── */
     function showAlert(msg, type = "error") {
       const el = document.getElementById("loginAlert");
       if (!el) return;
       el.textContent = msg;
-      el.className = `login-alert login-alert-${type}`;
+      el.className = `alert-banner ${type}`;
       el.classList.remove("hidden");
     }
 
@@ -417,14 +688,33 @@
       if (el) el.classList.add("hidden");
     }
 
-    async function handleUserLogin(e) {
-      e.preventDefault();
+    /* ── Role Redirection ── */
+    function redirectByRole(role) {
+      if (role === "admin") {
+        window.location.href = "/admin.html";
+      } else {
+        window.location.href = "/analyst.html";
+      }
+    }
+
+    /* ── Main Form Login ── */
+    async function handleFormLogin(e) {
+      if (e) e.preventDefault();
       clearAlert();
-      const email = document.getElementById("userEmailInput").value.trim();
-      const password = document.getElementById("userPassInput").value.trim();
-      const btn = document.getElementById("userSubmitBtn");
-      btn.disabled = true;
-      btn.textContent = "Signing in...";
+
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const btn = document.getElementById("submitBtn");
+
+      if (!email || !password) {
+        showAlert("Please enter both email and password.", "error");
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Signing In...";
+      }
 
       try {
         const res = await fetch(`${API}/auth/login`, {
@@ -433,91 +723,109 @@
           body: JSON.stringify({ email, password })
         });
         const data = await res.json();
+
         if (res.ok) {
           localStorage.setItem("playstore_iq_token", data.token);
           localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
-          showAlert(`Welcome, ${data.user.name}! Redirecting to User Page...`, "success");
-          setTimeout(() => {
-            window.location.href = "/user.html";
-          }, 400);
+          const role = data.user.role || "user";
+          showAlert(`Welcome, ${data.user.name}! Redirecting...`, "success");
+          setTimeout(() => redirectByRole(role), 350);
         } else {
-          showAlert(data.error || "User login failed. Please check credentials.", "error");
-        }
-      } catch (err) {
-        showAlert("Network error: " + err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Sign In to User Dashboard";
-      }
-    }
-
-    async function handleAdminLogin(e) {
-      e.preventDefault();
-      clearAlert();
-      const email = document.getElementById("adminEmailInput").value.trim();
-      const password = document.getElementById("adminPassInput").value.trim();
-      const btn = document.getElementById("adminSubmitBtn");
-      btn.disabled = true;
-      btn.textContent = "Authenticating...";
-
-      try {
-        const res = await fetch(`${API}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          if (data.user.role !== "admin") {
-            showAlert("Access Denied: Account is not an Administrator. Please use the User Portal on the left.", "error");
-            return;
-          }
-          localStorage.setItem("playstore_iq_token", data.token);
-          localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
-          showAlert(`👑 Welcome, Administrator! Redirecting to Admin Page...`, "success");
-          setTimeout(() => {
-            window.location.href = "/admin.html";
-          }, 400);
-        } else {
-          showAlert(data.error || "Admin login failed. Password must be 'admin'.", "error");
-        }
-      } catch (err) {
-        showAlert("Network error: " + err.message, "error");
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "👑 Sign In as Administrator";
-      }
-    }
-
-    async function quickLogin(role) {
-      clearAlert();
-      const creds = role === "admin"
-        ? { email: "admin", password: "admin" }
-        : { email: "user", password: "user" };
-
-      try {
-        const res = await fetch(`${API}/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(creds)
-        });
-        const data = await res.json();
-        if (res.ok) {
-          localStorage.setItem("playstore_iq_token", data.token);
-          localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
-          if (data.user.role === "admin") {
-            showAlert("👑 Logged in as Admin! Redirecting to admin.html...", "success");
-            setTimeout(() => { window.location.href = "/admin.html"; }, 350);
-          } else {
-            showAlert("👤 Logged in as User! Redirecting to user.html...", "success");
-            setTimeout(() => { window.location.href = "/user.html"; }, 350);
-          }
-        } else {
-          showAlert(data.error || "Quick login failed", "error");
+          showAlert(data.error || "Invalid email or password.", "error");
         }
       } catch (err) {
         showAlert("Connection error: " + err.message, "error");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Sign In";
+        }
       }
+    }
+
+    /* ── Quick Demo Access Click ── */
+    async function triggerQuickDemo(role) {
+      clearAlert();
+      const emailInput = document.getElementById("loginEmail");
+      const passInput = document.getElementById("loginPassword");
+
+      if (role === "admin") {
+        emailInput.value = "admin@playstore.io";
+        passInput.value = "admin";
+      } else {
+        emailInput.value = "analyst@playstore.io";
+        passInput.value = "analyst";
+      }
+
+      // Immediately log in with the selected role
+      await handleFormLogin(null);
+    }
+
+    /* ── Create Account (Register) ── */
+    function openRegisterModal() {
+      document.getElementById("registerModal").classList.add("open");
+    }
+    function closeRegisterModal() {
+      document.getElementById("registerModal").classList.remove("open");
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim();
+      const password = document.getElementById("regPass").value.trim();
+      const role = document.getElementById("regRole").value;
+      const btn = document.getElementById("regBtn");
+      const alertEl = document.getElementById("registerAlert");
+
+      btn.disabled = true;
+      btn.textContent = "Creating Account...";
+      alertEl.classList.add("hidden");
+
+      try {
+        const res = await fetch(`${API}/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem("playstore_iq_token", data.token);
+          localStorage.setItem("playstore_iq_user", JSON.stringify(data.user));
+          alertEl.textContent = "Account created! Redirecting...";
+          alertEl.className = "alert-banner success";
+          alertEl.classList.remove("hidden");
+          setTimeout(() => redirectByRole(role), 500);
+        } else {
+          alertEl.textContent = data.error || "Registration failed.";
+          alertEl.className = "alert-banner error";
+          alertEl.classList.remove("hidden");
+        }
+      } catch (err) {
+        alertEl.textContent = "Network error: " + err.message;
+        alertEl.className = "alert-banner error";
+        alertEl.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Create Account & Sign In";
+      }
+    }
+
+    /* ── Forgot Password Modal ── */
+    function openForgotModal() {
+      document.getElementById("forgotModal").classList.add("open");
+    }
+    function closeForgotModal() {
+      document.getElementById("forgotModal").classList.remove("open");
+    }
+
+    /* ── Reset App State ── */
+    async function resetAppState() {
+      localStorage.removeItem("playstore_iq_token");
+      localStorage.removeItem("playstore_iq_user");
+      document.getElementById("loginEmail").value = "analyst@playstore.io";
+      document.getElementById("loginPassword").value = "analyst";
+      showAlert("App state reset. Default analyst credentials restored.", "success");
     }
   </script>
 </body>

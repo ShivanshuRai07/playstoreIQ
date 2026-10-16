@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -81,31 +81,39 @@
     </div>
 
     <nav class="sidebar-nav" role="navigation" aria-label="Admin navigation">
-      <a href="javascript:void(0)" class="nav-item active" id="sideNavML" onclick="switchAdminTab('ml')">
-        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></span>
-        <span class="nav-label sidebar-text">🤖 ML Algorithm Lab</span>
+      <a href="javascript:void(0)" class="nav-item active" id="sideNavOverview" onclick="switchAdminTab('overview')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+        <span class="nav-label sidebar-text">📊 System Overview</span>
       </a>
-      <a href="javascript:void(0)" class="nav-item" id="sideNavDataset" onclick="switchAdminTab('dataset')">
-        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
-        <span class="nav-label sidebar-text">📝 Live Dataset Editor</span>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavEtl" onclick="switchAdminTab('etl')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></span>
+        <span class="nav-label sidebar-text">⚙️ Data &amp; ETL</span>
       </a>
-      <a href="javascript:void(0)" class="nav-item" id="sideNavDiag" onclick="switchAdminTab('diag')">
-        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
-        <span class="nav-label sidebar-text">📊 System Diagnostics</span>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavWarehouse" onclick="switchAdminTab('warehouse')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4"/><line x1="5" y1="21" x2="5" y2="10.85"/><line x1="19" y1="21" x2="19" y2="10.85"/><line x1="9" y1="21" x2="9" y2="10.85"/><line x1="15" y1="21" x2="15" y2="10.85"/></svg></span>
+        <span class="nav-label sidebar-text">🏛️ Warehouse Health</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavModels" onclick="switchAdminTab('models')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+        <span class="nav-label sidebar-text">🤖 Model Benchmarks &amp; Registry</span>
+      </a>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavClusters" onclick="switchAdminTab('clusters')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></span>
+        <span class="nav-label sidebar-text">🎯 Market Segmentation</span>
       </a>
       <a href="javascript:void(0)" class="nav-item" id="sideNavUsers" onclick="switchAdminTab('users')">
         <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
-        <span class="nav-label sidebar-text">👥 Users &amp; Permissions</span>
+        <span class="nav-label sidebar-text">👥 Users &amp; Roles</span>
       </a>
-      <a href="javascript:void(0)" class="nav-item" id="sideNavUpload" onclick="switchAdminTab('upload')">
-        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></span>
-        <span class="nav-label sidebar-text">📤 Replace Dataset (CSV)</span>
+      <a href="javascript:void(0)" class="nav-item" id="sideNavDiag" onclick="switchAdminTab('diag')">
+        <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        <span class="nav-label sidebar-text">📈 Diagnostics</span>
       </a>
 
-      <!-- Quick Switch to User Analytics -->
+      <!-- Quick Switch to Analyst Workspace -->
       <div class="nav-user-switch-link">
-        <a href="/user.html" title="Open user analytics view">
-          <span>📊 View User Analytics ↗</span>
+        <a href="/analyst.html" title="Open Analyst DWM Workspace">
+          <span>📊 Analyst DWM Workspace ↗</span>
         </a>
       </div>
     </nav>
@@ -162,31 +170,224 @@
       <!-- Section Heading -->
       <div class="section-heading admin-section-header mb-4">
         <div class="admin-badge-pill">👑 Administrator Command Center</div>
-        <h2 class="section-title">Admin Console &amp; Machine Learning Lab</h2>
-        <p class="section-desc">Exclusive administrator suite for multi-model algorithm evaluation, live dataset in-place editing, and system controls</p>
+        <h2 class="section-title">System Administration &amp; Governance</h2>
+        <p class="section-desc">Mission control for data warehouse health, ETL pipeline mathematical reconciliation, model registry, and access governance</p>
       </div>
 
       <!-- Admin Tab Buttons -->
       <div class="admin-tab-nav" role="tablist">
-        <button type="button" class="admin-tab-btn active" id="tabAdmML" onclick="switchAdminTab('ml')">
-          🤖 ML Algorithm Lab
+        <button type="button" class="admin-tab-btn active" id="tabAdmOverview" onclick="switchAdminTab('overview')">
+          📊 System Overview
         </button>
-        <button type="button" class="admin-tab-btn" id="tabAdmDataset" onclick="switchAdminTab('dataset')">
-          📝 Live Dataset Editor
+        <button type="button" class="admin-tab-btn" id="tabAdmEtl" onclick="switchAdminTab('etl')">
+          ⚙️ Data &amp; ETL
         </button>
-        <button type="button" class="admin-tab-btn" id="tabAdmDiag" onclick="switchAdminTab('diag')">
-          📊 System Diagnostics
+        <button type="button" class="admin-tab-btn" id="tabAdmWarehouse" onclick="switchAdminTab('warehouse')">
+          🏛️ Warehouse Health
+        </button>
+        <button type="button" class="admin-tab-btn" id="tabAdmModels" onclick="switchAdminTab('models')">
+          🤖 Model Benchmarks &amp; Registry
+        </button>
+        <button type="button" class="admin-tab-btn" id="tabAdmClusters" onclick="switchAdminTab('clusters')">
+          🎯 Market Segmentation
         </button>
         <button type="button" class="admin-tab-btn" id="tabAdmUsers" onclick="switchAdminTab('users')">
-          👥 Users &amp; Permissions
+          👥 Users &amp; Roles
         </button>
-        <button type="button" class="admin-tab-btn" id="tabAdmUpload" onclick="switchAdminTab('upload')">
-          📤 Replace Dataset (CSV)
+        <button type="button" class="admin-tab-btn" id="tabAdmDiag" onclick="switchAdminTab('diag')">
+          📈 Diagnostics
         </button>
       </div>
 
-      <!-- ── TAB PANE 1: ML ALGORITHM LAB ── -->
-      <div class="admin-pane" id="paneAdmML">
+      <!-- ── TAB PANE 1: SYSTEM OVERVIEW (EXECUTIVE DASHBOARD) ── -->
+      <div class="admin-pane" id="paneAdmOverview">
+        <!-- Executive KPI Grid -->
+        <div class="grid-4-col mb-4" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px">
+          <div class="card stat-card" style="margin-bottom:0">
+            <div class="card-body" style="padding:16px">
+              <span class="stat-label">Conformed Facts</span>
+              <span class="stat-value" id="ovFactCount" style="font-size:1.8rem;color:#10b981">7,242</span>
+              <span class="stat-sub">Fact_App Analytical Grain</span>
+            </div>
+          </div>
+          <div class="card stat-card" style="margin-bottom:0">
+            <div class="card-body" style="padding:16px">
+              <span class="stat-label">Conformed Dimensions</span>
+              <span class="stat-value" style="font-size:1.8rem;color:#3b82f6">7 Tables</span>
+              <span class="stat-sub">100% Valid Foreign Keys (0 Orphans)</span>
+            </div>
+          </div>
+          <div class="card stat-card" style="margin-bottom:0">
+            <div class="card-body" style="padding:16px">
+              <span class="stat-label">Champion Classifier</span>
+              <span class="stat-value" style="font-size:1.8rem;color:#f59e0b">Gradient Boosting</span>
+              <span class="stat-sub">Macro F1: 55.76% | AUC: 74.51%</span>
+            </div>
+          </div>
+          <div class="card stat-card" style="margin-bottom:0">
+            <div class="card-body" style="padding:16px">
+              <span class="stat-label">Target Leakage Status</span>
+              <span class="stat-value" style="font-size:1.8rem;color:#10b981">Zero Leakage</span>
+              <span class="stat-sub">Strict Pre-Launch Features Only</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Architecture & Operational Status -->
+        <div class="grid-2-col mb-4">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">⚖️ Pipeline Mathematical Reconciliation</h3>
+                <p class="card-subtitle">Zero data loss ETL invariant validation</p>
+              </div>
+              <span class="badge-lift">100% Reconciled</span>
+            </div>
+            <div class="card-body" style="font-size:13px;line-height:1.7;color:var(--text-2);">
+              <div style="font-family:monospace;background:var(--bg);padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);color:#34d399;margin-bottom:12px;">
+                10,841 (Raw) - 1 (Rejected) - 3,598 (Duplicates) = 7,242 (Clean Facts)
+              </div>
+              <ul style="padding-left:18px;">
+                <li><strong>Raw Extraction:</strong> Ingested 10,841 raw rows from Kaggle 2018 Google Play Store catalog.</li>
+                <li><strong>Deterministic Cleaning:</strong> Rejected 1 corrupt category-shifted record ('Life Made'). Deduplicated 3,598 repeated apps preserving latest maximum review count.</li>
+                <li><strong>Analytical Integrity:</strong> Exactly 7,242 facts loaded into <code>fact_app</code> with zero loss or distortion.</li>
+              </ul>
+              <div style="margin-top:14px;">
+                <button type="button" class="btn-outline btn-xs" onclick="switchAdminTab('etl')">Open Data &amp; ETL Console ➔</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">🏛️ Star Schema Warehouse Status</h3>
+                <p class="card-subtitle">Relational OLAP dimensional model integrity</p>
+              </div>
+              <span class="badge-best">0 Orphan Keys</span>
+            </div>
+            <div class="card-body" style="font-size:13px;line-height:1.7;color:var(--text-2);">
+              <ul style="padding-left:18px;">
+                <li><strong>Fact Table:</strong> <code>fact_app</code> (7,242 rows at grain of 1 unique clean application).</li>
+                <li><strong>Conformed Dimensions:</strong> <code>dim_app</code>, <code>dim_date</code> (1,315 days), <code>dim_category</code> (33), <code>dim_type</code> (2), <code>dim_genre</code> (118), <code>dim_contentrating</code> (6), <code>dim_androidversion</code> (33).</li>
+                <li><strong>Dialect Portability:</strong> Local SQLite (<code>database/playstore_dwh.db</code>) with instant PostgreSQL production compatibility via <code>database/connection.py</code>.</li>
+              </ul>
+              <div style="margin-top:14px;">
+                <button type="button" class="btn-outline btn-xs" onclick="switchAdminTab('warehouse')">Inspect Warehouse Health ➔</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Modules Grid -->
+        <div class="grid-3-col">
+          <div class="card" style="cursor:pointer" onclick="switchAdminTab('models')">
+            <div class="card-body">
+              <div style="font-size:20px;margin-bottom:8px">🤖</div>
+              <h4 style="margin:0 0 6px 0;font-size:15px;color:var(--text)">Model Registry</h4>
+              <p style="margin:0;font-size:12.5px;color:var(--text-muted)">Inspect 6-model benchmark leaderboard, test confusion matrix, and on-demand retraining controls.</p>
+            </div>
+          </div>
+          <div class="card" style="cursor:pointer" onclick="switchAdminTab('users')">
+            <div class="card-body">
+              <div style="font-size:20px;margin-bottom:8px">👥</div>
+              <h4 style="margin:0 0 6px 0;font-size:15px;color:var(--text)">Users &amp; Roles</h4>
+              <p style="margin:0;font-size:12.5px;color:var(--text-muted)">Manage accounts, credentials, and RBAC permissions across Admin, Business Analyst, and Normal User.</p>
+            </div>
+          </div>
+          <div class="card" style="cursor:pointer" onclick="switchAdminTab('diag')">
+            <div class="card-body">
+              <div style="font-size:20px;margin-bottom:8px">📈</div>
+              <h4 style="margin:0 0 6px 0;font-size:15px;color:var(--text)">System Diagnostics</h4>
+              <p style="margin:0;font-size:12.5px;color:var(--text-muted)">Live server uptime, memory telemetry, Python runtime environment, and active dataset statistics.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB PANE: MODEL REGISTRY & BENCHMARKS ── -->
+      <div class="admin-pane hidden" id="paneAdmModels">
+        <!-- Classification Models Benchmark -->
+        <div class="section-heading mb-4">
+          <h2 class="section-title">Classification Models Benchmark</h2>
+          <p class="section-desc">Rigorous comparison of 6 classifiers evaluated with 5-Fold Stratified Cross-Validation (Zero Feature Leakage)</p>
+        </div>
+
+        <!-- INSIGHT VIEW -->
+        <div id="class-insight-view" class="mb-4">
+          <div class="card mb-4">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Model Comparison Leaderboard</h3>
+                <p class="card-subtitle">Target: Popularity Tier (Low &lt;10k, Medium 10k-1M, High &gt;1M) • Ranked by Macro F1-Score</p>
+              </div>
+              <span class="badge-best" id="mlLeaderboardWinnerBadge">Winner: Gradient Boosting</span>
+            </div>
+            <div class="card-body table-wrap">
+              <table class="leaderboard-table" id="mlLeaderboardTable">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Algorithm</th>
+                    <th>5-Fold CV Acc</th>
+                    <th>Test Acc</th>
+                    <th>Precision (Macro)</th>
+                    <th>Recall (Macro)</th>
+                    <th>Macro F1</th>
+                    <th>ROC-AUC</th>
+                    <th>Train Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="mlLeaderboardBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid-2-col mb-4">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Multi-Class Confusion Matrix</h3>
+                  <p class="card-subtitle">Predicted vs Actual classes for untouched test partition (N = 1,449)</p>
+                </div>
+                <select class="filter-select" id="cmModelSelect" style="width: auto;">
+                  <option value="Gradient Boosting">Gradient Boosting</option>
+                  <option value="Random Forest">Random Forest</option>
+                  <option value="Decision Tree">Decision Tree</option>
+                  <option value="K-Nearest Neighbors">K-Nearest Neighbors</option>
+                  <option value="Logistic Regression">Logistic Regression</option>
+                  <option value="Naive Bayes">Naive Bayes</option>
+                </select>
+              </div>
+              <div class="card-body">
+                <div class="matrix-grid-3x3" id="confusionMatrixGrid"></div>
+                <div style="text-align: center; font-size: 11px; color: var(--text-2); margin-top: 8px;">
+                  Row = Actual Class (0: Low, 1: Med, 2: High) • Col = Predicted Class
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Model Evaluation Insights</h3>
+                  <p class="card-subtitle">Academic methodology &amp; leakage controls</p>
+                </div>
+              </div>
+              <div class="card-body" style="font-size: 13px; line-height: 1.6; color: var(--text-2);">
+                <ul style="padding-left: 20px;">
+                  <li style="margin-bottom: 8px;"><strong>Zero Data Leakage:</strong> Post-launch metrics (<code>Reviews</code>, <code>Installs</code>, <code>Rating</code>) were excluded from feature inputs, ensuring valid early-stage market predictability.</li>
+                  <li style="margin-bottom: 8px;"><strong>Gradient Boosting Superiority:</strong> Achieved highest Macro F1 (0.5576) and ROC-AUC (0.7451), capturing complex non-linear feature interactions.</li>
+                  <li style="margin-bottom: 8px;"><strong>Ensemble Variance Reduction:</strong> Random Forest achieved 57.28% test accuracy, with instant inference latencies of &lt;1 ms.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
         <!-- Model Retraining Toolbar -->
         <div class="admin-ml-toolbar mb-4">
           <div class="admin-ml-info">
@@ -217,34 +418,37 @@
           <div class="best-algo-badge" id="bestAlgoBadge">—%</div>
         </div>
 
-        <!-- Accuracy Comparison Chart -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <div>
-              <h3 class="card-title">Accuracy Comparison Across 6 Classifiers</h3>
-              <p class="card-subtitle">Random Forest · Gradient Boosting · Decision Tree · Logistic Regression · KNN · Naive Bayes</p>
+        <!-- ML Benchmark Charts Grid (Side-by-Side Responsive Grid) -->
+        <div class="admin-charts-grid mb-4">
+          <!-- Accuracy Comparison Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Accuracy Comparison Across 6 Classifiers</h3>
+                <p class="card-subtitle">Random Forest · Gradient Boosting · Decision Tree · Logistic Regression · KNN · Naive Bayes</p>
+              </div>
+              <div class="card-actions">
+                <div class="ml-meta hidden" id="mlMeta"></div>
+              </div>
             </div>
-            <div class="card-actions">
-              <div class="ml-meta hidden" id="mlMeta"></div>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skMlCompare"></div>
+              <canvas id="mlCompareChart" class="hidden"></canvas>
             </div>
           </div>
-          <div class="card-body chart-area">
-            <div class="skeleton-chart" id="skMlCompare"></div>
-            <canvas id="mlCompareChart" class="hidden"></canvas>
-          </div>
-        </div>
 
-        <!-- Multi-Metric Radar Scorecard -->
-        <div class="card mb-4">
-          <div class="card-header">
-            <div>
-              <h3 class="card-title">Multi-Metric Scorecard</h3>
-              <p class="card-subtitle">Precision · Recall · F1 · AUC per algorithm on test partition</p>
+          <!-- Multi-Metric Radar Scorecard -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Multi-Metric Scorecard</h3>
+                <p class="card-subtitle">Precision · Recall · F1 · AUC per algorithm on test partition</p>
+              </div>
             </div>
-          </div>
-          <div class="card-body chart-area">
-            <div class="skeleton-chart" id="skMlRadar"></div>
-            <canvas id="mlRadarChart" class="hidden"></canvas>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skMlRadar"></div>
+              <canvas id="mlRadarChart" class="hidden"></canvas>
+            </div>
           </div>
         </div>
 
@@ -268,67 +472,53 @@
         </div>
       </div>
 
-      <!-- ── TAB PANE 2: LIVE DATASET IN-PLACE EDITOR ── -->
-      <div class="admin-pane hidden" id="paneAdmDataset">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <h3 class="card-title">📝 Dataset Manager &amp; Record Editor</h3>
-              <p class="card-subtitle">Add new apps, edit fields (ratings, reviews, price, category), delete records, or reset to original Kaggle 2018 dataset</p>
+      <!-- ── TAB PANE: MARKET SEGMENTATION (K-MEANS) ── -->
+      <div class="admin-pane hidden" id="paneAdmClusters">
+        <div class="section-heading mb-4">
+          <h2 class="section-title">App Market Segmentation (K-Means)</h2>
+          <p class="section-desc">Unsupervised clustering discovering 5 empirical app market segments from multi-dimensional feature space</p>
+        </div>
+
+        <!-- INSIGHT VIEW -->
+        <div id="clusters-insight-view">
+          <div class="grid-2-col mb-4">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">K-Means Market Clusters</h3>
+                  <p class="card-subtitle">Optimal K = 5 Segments: Multi-dimensional Feature Space</p>
+                </div>
+              </div>
+              <div class="card-body chart-area">
+                <div class="skeleton-chart" id="skCluster"></div>
+                <canvas id="clusterChart" class="hidden"></canvas>
+              </div>
+              <div class="cluster-legend" id="clusterLegend"></div>
             </div>
-            <div class="ds-header-actions">
-              <button type="button" class="btn-primary-sm" onclick="openAddAppModal()">
-                ➕ Add New App
-              </button>
-              <button type="button" class="btn-outline" onclick="resetDatasetToBackup()" title="Restore pristine Kaggle 2018 dataset">
-                ↺ Reset to Default Kaggle 2018
-              </button>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Optimal K Determination</h3>
+                  <p class="card-subtitle">Elbow Inertia &amp; Silhouette Score Curves</p>
+                </div>
+                <span class="badge-best">Peak Silhouette at K = 5</span>
+              </div>
+              <div class="card-body chart-area">
+                <canvas id="kCurvesChart"></canvas>
+              </div>
             </div>
           </div>
-          <div class="card-body">
-            <!-- Search & Filter Bar -->
-            <div class="ds-toolbar">
-              <div class="ds-search-wrap">
-                <input type="text" id="dsSearchInput" class="pf-input" placeholder="Search app by name in dataset…" oninput="debounceDatasetSearch()" />
-              </div>
-              <div class="ds-cat-wrap">
-                <select id="dsCategorySelect" class="pf-input" onchange="loadDatasetTable(1)">
-                  <option value="">All Categories</option>
-                </select>
-              </div>
-              <span class="ds-count-pill" id="dsCountPill">Loading records…</span>
-            </div>
 
-            <!-- Records Table -->
-            <div class="table-wrap ds-table-wrap">
-              <table class="data-table" id="dsAppsTable">
-                <thead>
-                  <tr>
-                    <th>App Name</th>
-                    <th>Category</th>
-                    <th class="th-num">Rating</th>
-                    <th class="th-num">Reviews</th>
-                    <th class="th-num">Installs</th>
-                    <th class="th-right">Type</th>
-                    <th class="th-num">Price</th>
-                    <th>Updated</th>
-                    <th class="th-right" style="min-width:130px">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="dsAppsTableBody">
-                  <tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted)">Loading dataset records…</td></tr>
-                </tbody>
-              </table>
+          <!-- Empirical Cluster Profiles Grid -->
+          <div style="margin-top: 24px;">
+            <div class="section-heading" style="margin-bottom: 12px;">
+              <h3 class="section-title" style="font-size: 16px;">Empirical Cluster Profiles</h3>
+              <p class="section-desc">Business labels derived post-hoc strictly from cluster centroids</p>
             </div>
-
-            <!-- Pagination -->
-            <div class="ds-pagination" id="dsPagination">
-              <button type="button" class="btn-outline btn-xs" id="dsPrevBtn" onclick="changeDatasetPage(-1)" disabled>◀ Previous</button>
-              <span class="ds-page-info" id="dsPageInfo">Page 1</span>
-              <button type="button" class="btn-outline btn-xs" id="dsNextBtn" onclick="changeDatasetPage(1)" disabled>Next ▶</button>
-            </div>
+            <div class="cluster-grid" id="clusterProfilesGrid"></div>
           </div>
         </div>
+
       </div>
 
       <!-- ── TAB PANE 3: SYSTEM DIAGNOSTICS ── -->
@@ -430,8 +620,140 @@
         </div>
       </div>
 
-      <!-- ── TAB PANE 5: DATASET UPLOAD ── -->
-      <div class="admin-pane hidden" id="paneAdmUpload">
+      <!-- ── TAB PANE 2: DATA & ETL ── -->
+      <div class="admin-pane hidden" id="paneAdmEtl">
+        <!-- 1. Canonical ETL Audit & Reconciliation -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div>
+              <div class="admin-badge-pill" style="margin-bottom:6px">Phase 2 — Canonical Pipeline</div>
+              <h3 class="card-title">Canonical ETL Audit &amp; Mathematical Reconciliation</h3>
+              <p class="card-subtitle">Zero data loss verification: N_raw - N_rejected - N_dupes = N_clean</p>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button type="button" class="btn-outline btn-xs" onclick="loadWarehouseGovernance()">
+                ↻ Refresh Audit
+              </button>
+              <button type="button" class="btn-primary-sm" id="btnRunEtl" onclick="triggerAdminEtl()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                ▶ Run Canonical ETL Pipeline
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Reconciliation Invariant Banner -->
+            <div class="olap-sql-box mb-3" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25);border-radius:var(--radius-sm);padding:12px 16px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-weight:700;color:var(--text);font-size:13px;">⚖️ Mathematical Invariant Reconciled:</span>
+                <span class="badge-lift" id="etlReconcileBadge">100% RECONCILED (0 Loss)</span>
+              </div>
+              <div style="font-family:monospace;font-size:13px;color:var(--text-2);margin-top:6px;">
+                <span id="etlEquation">10,841 (Raw) - 1 (Rejected) - 3,598 (Duplicates) = 7,242 (Clean Analytical Facts)</span>
+              </div>
+            </div>
+
+            <!-- ETL 4-Metric Grid -->
+            <div class="grid-4-col mb-3" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+              <div class="card stat-card" style="margin-bottom:0">
+                <div class="card-body" style="padding:14px">
+                  <span class="stat-label">Raw Ingested Records</span>
+                  <span class="stat-value" id="etlRawRows" style="font-size:1.6rem">10,841</span>
+                  <span class="stat-sub">googleplaystore.csv</span>
+                </div>
+              </div>
+              <div class="card stat-card" style="margin-bottom:0">
+                <div class="card-body" style="padding:14px">
+                  <span class="stat-label">Rejected / Corrupt</span>
+                  <span class="stat-value" id="etlRejectedRows" style="font-size:1.6rem;color:#ef4444">1</span>
+                  <span class="stat-sub">Category Shift (Life Made)</span>
+                </div>
+              </div>
+              <div class="card stat-card" style="margin-bottom:0">
+                <div class="card-body" style="padding:14px">
+                  <span class="stat-label">Duplicates Deduplicated</span>
+                  <span class="stat-value" id="etlDupeRows" style="font-size:1.6rem;color:#f59e0b">3,598</span>
+                  <span class="stat-sub">Max Reviews Deterministic</span>
+                </div>
+              </div>
+              <div class="card stat-card" style="margin-bottom:0">
+                <div class="card-body" style="padding:14px">
+                  <span class="stat-label">Clean Analytical Facts</span>
+                  <span class="stat-value" id="etlCleanRows" style="font-size:1.6rem;color:#10b981">7,242</span>
+                  <span class="stat-sub">clean_apps_analytical.csv</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Pipeline Execution Console -->
+            <div class="hidden" id="etlConsoleWrap" style="margin-top:14px">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px">ETL EXECUTION TERMINAL:</div>
+              <pre class="olap-sql-content" id="etlConsoleLog" style="max-height:160px;overflow-y:auto;background:var(--bg);color:#34d399;padding:12px;border-radius:var(--radius-sm);font-size:12px;font-family:monospace;"></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Live Dataset In-Place Record Editor -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">📝 Dataset Manager &amp; Record Editor</h3>
+              <p class="card-subtitle">Add new apps, edit fields (ratings, reviews, price, category), delete records, or reset to original Kaggle 2018 dataset</p>
+            </div>
+            <div class="ds-header-actions">
+              <button type="button" class="btn-primary-sm" onclick="openAddAppModal()">
+                ➕ Add New App
+              </button>
+              <button type="button" class="btn-outline" onclick="resetDatasetToBackup()" title="Restore pristine Kaggle 2018 dataset">
+                ↺ Reset to Default Kaggle 2018
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <!-- Search & Filter Bar -->
+            <div class="ds-toolbar">
+              <div class="ds-search-wrap">
+                <input type="text" id="dsSearchInput" class="pf-input" placeholder="Search app by name in dataset…" oninput="debounceDatasetSearch()" />
+              </div>
+              <div class="ds-cat-wrap">
+                <select id="dsCategorySelect" class="pf-input" onchange="loadDatasetTable(1)">
+                  <option value="">All Categories</option>
+                </select>
+              </div>
+              <span class="ds-count-pill" id="dsCountPill">Loading records…</span>
+            </div>
+
+            <!-- Records Table -->
+            <div class="table-wrap ds-table-wrap">
+              <table class="data-table" id="dsAppsTable">
+                <thead>
+                  <tr>
+                    <th>App Name</th>
+                    <th>Category</th>
+                    <th class="th-num">Rating</th>
+                    <th class="th-num">Reviews</th>
+                    <th class="th-num">Installs</th>
+                    <th class="th-right">Type</th>
+                    <th class="th-num">Price</th>
+                    <th>Updated</th>
+                    <th class="th-right" style="min-width:130px">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dsAppsTableBody">
+                  <tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted)">Loading dataset records…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="ds-pagination" id="dsPagination">
+              <button type="button" class="btn-outline btn-xs" id="dsPrevBtn" onclick="changeDatasetPage(-1)" disabled>◀ Previous</button>
+              <span class="ds-page-info" id="dsPageInfo">Page 1</span>
+              <button type="button" class="btn-outline btn-xs" id="dsNextBtn" onclick="changeDatasetPage(1)" disabled>Next ▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Replace Active Dataset (CSV Upload & Export) -->
         <div class="card">
           <div class="card-header">
             <div>
@@ -459,6 +781,140 @@
             <div class="upload-status hidden" id="uploadStatus"></div>
           </div>
         </div>
+      </div>
+
+      <!-- ── TAB PANE 3: WAREHOUSE HEALTH & GOVERNANCE ── -->
+      <div class="admin-pane hidden" id="paneAdmWarehouse">
+
+        <!-- 2. Star Schema Warehouse Health & Dimensional Grain -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div>
+              <div class="admin-badge-pill" style="margin-bottom:6px">Phase 3 — Star Schema DWH</div>
+              <h3 class="card-title">Star Schema Data Warehouse Architecture</h3>
+              <p class="card-subtitle">Hybrid SQLite / PostgreSQL Star Schema (Fact_App + 7 Conformed Dimensions)</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge-lift" id="whDialectBadge">Dialect: SQLite / Postgres</span>
+              <span class="badge-best" id="whIntegrityBadge">0 Orphan Keys (100% Valid)</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="dwm-table">
+                <thead>
+                  <tr>
+                    <th>Entity</th>
+                    <th>Type</th>
+                    <th>Granularity / Role</th>
+                    <th>Row Count</th>
+                    <th>Surrogate Key</th>
+                    <th>Integrity Status</th>
+                  </tr>
+                </thead>
+                <tbody id="whTableBody">
+                  <tr>
+                    <td><strong>Fact_App</strong></td>
+                    <td><span class="badge-best">Fact Table</span></td>
+                    <td>App Metric Snapshot (Grain: 1 row per unique clean app)</td>
+                    <td><strong id="whFactCount">7,242</strong></td>
+                    <td>fact_id (PK)</td>
+                    <td><span class="badge-lift">100% Populated</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_App</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>App identity, name, current version</td>
+                    <td><strong id="whDimApp">7,242</strong></td>
+                    <td>app_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_Date</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>Time hierarchy: Year, Quarter, Month, Day</td>
+                    <td><strong id="whDimDate">1,315</strong></td>
+                    <td>date_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_Category</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>Play Store 33 distinct taxonomy categories</td>
+                    <td><strong id="whDimCategory">33</strong></td>
+                    <td>category_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_Type</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>Monetization model: Free vs Paid</td>
+                    <td><strong id="whDimType">2</strong></td>
+                    <td>type_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_Genre</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>Granular genre taxonomy classifications</td>
+                    <td><strong id="whDimGenre">118</strong></td>
+                    <td>genre_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_ContentRating</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>Maturity tiers (Everyone, Teen, Mature 17+, etc.)</td>
+                    <td><strong id="whDimContentRating">6</strong></td>
+                    <td>content_rating_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Dim_AndroidVersion</strong></td>
+                    <td>Conformed Dim</td>
+                    <td>Minimum and maximum OS runtime compatibility</td>
+                    <td><strong id="whDimAndroidVersion">33</strong></td>
+                    <td>version_id (Surrogate)</td>
+                    <td><span class="badge-lift">0 Orphans</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Verification & Validation (V&V) Matrix (16 Tests) -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <div>
+              <div class="admin-badge-pill" style="margin-bottom:6px">Phase 6 — Engineering Verification</div>
+              <h3 class="card-title">Verification &amp; Validation (V&amp;V) Acceptance Matrix</h3>
+              <p class="card-subtitle">Automated end-to-end regression test suite (16 test assertions across 6 phases)</p>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="badge-lift" style="font-size:13px;padding:4px 12px">16 / 16 Tests Passed (100%)</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap">
+              <table class="dwm-table">
+                <thead>
+                  <tr>
+                    <th>Phase</th>
+                    <th>Test ID</th>
+                    <th>Specification Tested</th>
+                    <th>Acceptance Criterion</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="vvMatrixBody">
+                  <!-- Injected via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </main>

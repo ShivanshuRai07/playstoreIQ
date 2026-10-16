@@ -1,0 +1,154 @@
+{
+  "optimal_k": 5,
+  "k_range": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "elbow_curve": [
+    {
+      "k": 2,
+      "inertia": 25207.41
+    },
+    {
+      "k": 3,
+      "inertia": 18212.81
+    },
+    {
+      "k": 4,
+      "inertia": 14164.96
+    },
+    {
+      "k": 5,
+      "inertia": 10280.41
+    },
+    {
+      "k": 6,
+      "inertia": 8779.07
+    },
+    {
+      "k": 7,
+      "inertia": 7940.06
+    },
+    {
+      "k": 8,
+      "inertia": 7248.74
+    }
+  ],
+  "silhouette_curve": [
+    {
+      "k": 2,
+      "score": 0.3621
+    },
+    {
+      "k": 3,
+      "score": 0.3674
+    },
+    {
+      "k": 4,
+      "score": 0.3874
+    },
+    {
+      "k": 5,
+      "score": 0.4003
+    },
+    {
+      "k": 6,
+      "score": 0.3206
+    },
+    {
+      "k": 7,
+      "score": 0.3174
+    },
+    {
+      "k": 8,
+      "score": 0.3046
+    }
+  ],
+  "cluster_profiles": [
+    {
+      "cluster_id": 0,
+      "size": 2324,
+      "percentage": 32.1,
+      "avg_installs": 500,
+      "avg_reviews": 8,
+      "avg_rating": 4.4,
+      "avg_price": 0.58,
+      "avg_size_mb": 13.6,
+      "free_percentage": 90.2,
+      "top_categories": {
+        "FAMILY": 439,
+        "TOOLS": 201,
+        "BUSINESS": 183
+      }
+    },
+    {
+      "cluster_id": 1,
+      "size": 1018,
+      "percentage": 14.1,
+      "avg_installs": 1000000,
+      "avg_reviews": 43444,
+      "avg_rating": 4.3,
+      "avg_price": 0.17,
+      "avg_size_mb": 63.8,
+      "free_percentage": 95.2,
+      "top_categories": {
+        "GAME": 359,
+        "FAMILY": 336,
+        "SPORTS": 48
+      }
+    },
+    {
+      "cluster_id": 2,
+      "size": 3160,
+      "percentage": 43.6,
+      "avg_installs": 1000000,
+      "avg_reviews": 27980,
+      "avg_rating": 4.32,
+      "avg_price": 0.13,
+      "avg_size_mb": 15.0,
+      "free_percentage": 97.2,
+      "top_categories": {
+        "FAMILY": 427,
+        "TOOLS": 285,
+        "GAME": 186
+      }
+    },
+    {
+      "cluster_id": 3,
+      "size": 15,
+      "percentage": 0.2,
+      "avg_installs": 5000,
+      "avg_reviews": 180,
+      "avg_rating": 3.91,
+      "avg_price": 390.99,
+      "avg_size_mb": 11.4,
+      "free_percentage": 0.0,
+      "top_categories": {
+        "LIFESTYLE": 6,
+        "FINANCE": 6,
+        "FAMILY": 3
+      }
+    },
+    {
+      "cluster_id": 4,
+      "size": 725,
+      "percentage": 10.0,
+      "avg_installs": 10000,
+      "avg_reviews": 186,
+      "avg_rating": 3.15,
+      "avg_price": 0.17,
+      "avg_size_mb": 17.5,
+      "free_percentage": 96.6,
+      "top_categories": {
+        "FAMILY": 116,
+        "TOOLS": 92,
+        "LIFESTYLE": 48
+      }
+    }
+  ]
+}

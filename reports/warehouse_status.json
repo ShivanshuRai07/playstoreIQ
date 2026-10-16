@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-08T15:36:29.477663Z",
+  "fact_app_count": 7242,
+  "dim_app_count": 7242,
+  "dim_category_count": 33,
+  "dim_date_count": 364,
+  "dim_genre_count": 111,
+  "dim_type_count": 2,
+  "dim_content_rating_count": 5,
+  "dim_android_version_count": 30,
+  "orphan_records_count": 0,
+  "integrity_verified": true
+}

@@ -15,7 +15,11 @@
     },
     {
       "source": "/user",
-      "destination": "/frontend/user.html"
+      "destination": "/frontend/analyst.html"
+    },
+    {
+      "source": "/analyst",
+      "destination": "/frontend/analyst.html"
     },
     {
       "source": "/admin",

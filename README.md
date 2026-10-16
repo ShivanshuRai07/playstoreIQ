@@ -1,134 +1,136 @@
-# Google Play Store BI Dashboard
+# PlayStoreIQ: Data Warehousing & Data Mining System
 
-A full-stack, interactive **Data Mining & Business Intelligence Dashboard** for the Google Play Store dataset — built with **Flask** (backend) and **HTML/CSS/JS + Chart.js** (frontend).
-
----
-
-## 📁 Project Structure
-
-```
-PlaystoreProject/
-├── data/
-│   ├── googleplaystore.csv           ← Main app dataset (10,841 rows)
-│   └── googleplaystore_user_reviews.csv  ← User reviews (57K+ rows)
-├── backend/
-│   └── app.py                        ← Flask API (all endpoints)
-├── frontend/
-│   ├── index.html                    ← Dashboard UI
-│   ├── style.css                     ← Dark/light theme, glassmorphism
-│   └── app.js                        ← Chart.js, filters, mining
-├── requirements.txt
-└── README.md
-```
+PlayStoreIQ is an enterprise-grade **Data Warehousing & Business Intelligence (DWM) platform** built for Google Play Store market intelligence. It features a genuine **Star Schema Data Warehouse**, a **Relational OLAP (ROLAP) Engine**, **Leakage-Free 3-Tier Popularity Prediction**, unsupervised segment discovery, and an examiner-grade **Dual-Layer Architecture** (`[ 📊 Business Insight | ⚙️ How It Works ]`).
 
 ---
 
-## ⚙️ Setup & Run
+## 🌟 Key Architecture Pillars
 
-### 1. Install dependencies
+```text
+                                 PLAYSTOREIQ
+                                      │
+                    ┌─────────────────┴─────────────────┐
+                    │                                   │
+              END USERS                               ADMIN
+                    │                                   │
+        ┌───────────┴──────────┐                   System Health
+        │                      │                   ETL Invariants
+   Normal User              Analyst                Warehouse Health
+(Discovery Mode)       (Analytical Suite)          Model Registry
+        │                      │                   Users & Security
+        ↓                      ↓
+    DISCOVERY             INVESTIGATION
+        │                      │
+        └──────────┬───────────┘
+                   ↓
+             INSIGHT LAYER
+                   │
+       ┌───────────┼───────────┐
+       │           │           │
+   ROLAP Cube  Supervised   Unsupervised
+  (Roll-up,    Classifiers   Mining
+   Drill-down, (6 Models,    (K-Means K=5,
+   Slice, Dice, Champion     Apriori Rules,
+   Pivot)       GBoost)      VADER Sentiment)
+                   │
+                   ↓
+     HOW IT WORKS (TECHNICAL DWM)
+                   │
+      Exact SQL queries · Mathematical formulas ·
+      Pipeline code · Viva defense explanations
+```
+
+---
+
+## 👥 Role-Based Access Control (RBAC)
+
+| Role | Default Email / Password | Scope & Modules |
+|---|---|---|
+| **Normal User** | `user@playstore.io` / `user` | **Discovery Mode:** Home overview, Trending with time windows (`7D`, `1M`, `3M`, `6M`, `1Y`), Category exploration, App insights. Clean view with zero raw ML clutter. |
+| **Business Analyst** | `analyst@playstore.io` / `analyst` | **Full DWM Suite:** Market Intelligence, Category Opportunity Matrix (2x2 Quadrant), OLAP Engine (Roll-up, Drill-down, Slice, Dice, Pivot), Segmentation, Association Discovery, Sentiment Intelligence, Leakage-Free Popularity Prediction, and Model Benchmark. Every analytical module has the dual `[ Insights | ⚙️ How It Works ]` layer. |
+| **Administrator** | `admin@playstore.io` / `admin` | **System Governance:** System Overview & reconciliation invariants, Canonical ETL audit & Live Fact Editor, Star Schema health & dimensional grain checks, Model Registry, User management, and Diagnostics. |
+
+---
+
+## 🏗️ Data Warehouse: Star Schema Specification
+
+The warehouse (`database/playstore_dwh.db` / PostgreSQL) enforces strict referential integrity across 7,242 clean fact rows:
+
+- **`fact_app`** (Grain: 1 unique app publishing record): `app_id`, `category_id`, `type_id`, `content_rating_id`, `date_id`, `rating`, `reviews`, `size_mb`, `installs`, `price_usd`
+- **`dim_app`**: Surrogate app key, App name, Android version requirement
+- **`dim_category`**: 33 conformed Google Play categories
+- **`dim_type`**: Monetization type (`Free` vs `Paid`)
+- **`dim_content_rating`**: Age gating classification (`Everyone`, `Teen`, `Mature 17+`, etc.)
+- **`dim_date`**: Temporal calendar hierarchy (`date_key`, `year`, `quarter`, `month`, `day`, `day_of_week`)
+
+### Canonical ETL Count Conservation Invariant
+$$\text{Raw Ingestion } (10,841) - \text{Corrupt Rows } (1) - \text{Duplicate Snapshots } (3,598) = \text{Warehouse Clean Fact Rows } (7,242)$$
+
+---
+
+## 🤖 Machine Learning & Data Mining Modules
+
+### 1. Zero-Leakage Popularity Prediction
+* **Problem Formulation:** Multi-class classification into commercial market reach tiers:
+  * **Low Popularity:** $< 10,000$ installs
+  * **Medium Popularity:** $10,000 - 1,000,000$ installs
+  * **High / Viral Reach:** $> 1,000,000$ installs
+* **Zero-Leakage Guarantee:** `Installs` and `Reviews` are strictly excluded from the feature space.
+* **Input Feature Space (Intrinsic Pre-Release Metadata):**
+  $$\vec{x} = [\text{Price\_USD}, \text{Size\_MB}, \text{Android\_Min\_Ver}, \text{Name\_Length}, \text{Word\_Count}, \text{IsFree}, \text{Category\_Freq}, \text{ContentRating\_Freq}]$$
+
+### 2. Six-Model Benchmark
+Evaluated under 5-fold stratified cross-validation on 7,242 records:
+1. **Gradient Boosting Classifier (Champion - Production):** Macro F1 = **55.76%**, ROC-AUC = **74.51%**
+2. **Random Forest Classifier:** Macro F1 = 54.84%, ROC-AUC = 73.88%
+3. **Decision Tree (CART):** Macro F1 = 53.69%, ROC-AUC = 65.58%
+4. **K-Nearest Neighbors (KNN):** Macro F1 = 47.05%, ROC-AUC = 63.84%
+5. **Logistic Regression:** Macro F1 = 46.87%, ROC-AUC = 64.33%
+6. **Gaussian Naive Bayes:** Macro F1 = 43.90%, ROC-AUC = 63.18%
+
+### 3. K-Means Market Segmentation ($K=5$)
+* Features: $\vec{z} = [\ln(1+\text{Reviews}), \ln(1+\text{Installs}), \text{Rating}, \text{Price}, \text{Size\_MB}]$
+* Evaluated over $K \in [2, 8]$; optimal silhouette score at $K=5$ ($0.4003$).
+* Discovered clusters: *High-Engagement Leaders*, *Niche Free*, *Emerging Long-Tail*, *Premium Monetized*, *Heavyweight Mass Market*.
+
+### 4. Apriori Association Rules
+* Discovers frequent itemset associations with minimum support, confidence, and $\text{Lift} > 1.0$.
+* Academic defense reminder: *Association does not imply causation*.
+
+---
+
+## ⚙️ Quickstart & Local Setup
+
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Download NLTK data (one-time, auto-runs on first start)
-The backend auto-downloads `punkt` and `stopwords` on first launch.
-
-### 3. Start the backend
+### 2. Run Formal Verification Suite
 ```bash
-cd backend
-python app.py
+python tests/test_dwm_verification.py
 ```
-The API runs at **http://127.0.0.1:5000**
+*Executes all 16 V&V integrity checks (ETL count conservation, Star Schema foreign keys, OLAP conservation, zero-leakage threshold, clustering silhouette, association lift).*
 
-### 4. Open the frontend
-Open `frontend/index.html` in your browser — **no build step needed**.
+### 3. Start the Server
+```bash
+python backend/app.py
+```
+*Backend runs locally at: `http://127.0.0.1:5000`*
 
-> **Note**: The frontend makes API calls to `http://127.0.0.1:5000`. Ensure the backend is running first.
-
----
-
-## 🌟 Features
-
-### Global Filters (all charts update live)
-| Filter | Description |
-|--------|-------------|
-| **Time Range** | Last 1/3/6/12 months or custom date range (relative to dataset max date) |
-| **Category** | Multi-select dropdown with all 33 categories |
-| **Type** | Free / Paid |
-| **Content Rating** | Everyone, Teen, Mature 17+, etc. |
-| **Rating Range** | Dual slider (1.0–5.0) |
-| **Android Version** | Dropdown |
-| **App Search** | Live text search on app name |
-
-### KPI Tiles (with δ vs previous period)
-- Total Apps · Avg Rating · Total Installs · Total Reviews
-- % Free · Avg Price (Paid) · Apps Updated in Period · Top Category
-
-### Charts (11 interactive charts)
-- Apps per Category (bar, click to filter)
-- Installs by Category (bar)
-- Rating Distribution (histogram)
-- Free vs Paid (donut)
-- Apps Updated per Month (line)
-- Top 10 Apps by Installs (bar)
-- Price vs Rating — paid apps only (scatter)
-- Reviews vs Installs (scatter, color by category)
-- Content Rating Share (donut, click to filter)
-- Android Version Distribution (bar)
-- Category × Rating Heatmap (HTML table with intensity coloring)
-
-### Data Mining Section (4 tabs)
-| Tab | Contents |
-|-----|----------|
-| **Sentiment Analysis** | Overall +/−/neutral donut; per-category stacked bar; interactive word cloud |
-| **K-Means Clustering** | 5-cluster scatter (Rating vs Installs) with cluster labels |
-| **Association Insights** | Category associations: paid trends, high-rated, top installs |
-| **Predictive Model** | Random Forest predicting high-rated (≥4.3); accuracy + feature importance chart |
-
-### UX
-- 🌙/☀️ Dark/light theme toggle
-- ↓ Export filtered data to CSV
-- 💡 Auto-generated insights panel
-- Drill-down: click bar/donut segments to apply as filter
-- Tooltips on all interactive elements
-- Responsive layout (sidebar collapses on mobile)
+### 4. Access the Application
+Open your browser to:
+- **Login Portal:** `http://127.0.0.1:5000/login.html`
+- **Analyst & User Workspace:** `http://127.0.0.1:5000/user.html`
+- **System Administration:** `http://127.0.0.1:5000/admin.html`
 
 ---
 
-## 🔌 API Reference
+## 📚 Viva Defense Reference
 
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/meta` | Filter options (categories, content ratings, Android versions) |
-| `GET /api/kpis` | All KPI tiles with delta vs previous period |
-| `GET /api/charts/apps_per_category` | App count by category |
-| `GET /api/charts/installs_by_category` | Total installs by category |
-| `GET /api/charts/rating_distribution` | Histogram data |
-| `GET /api/charts/free_vs_paid` | Free/paid counts |
-| `GET /api/charts/apps_updated_per_month` | Monthly update counts |
-| `GET /api/charts/top10_by_installs` | Top 10 apps by installs |
-| `GET /api/charts/price_vs_rating` | Paid apps scatter data |
-| `GET /api/charts/reviews_vs_installs` | Reviews/installs scatter |
-| `GET /api/charts/content_rating_share` | Content rating distribution |
-| `GET /api/charts/android_version_dist` | Android version distribution |
-| `GET /api/charts/category_rating_heatmap` | Heatmap pivot data |
-| `GET /api/mining/sentiment` | Sentiment analysis + word cloud |
-| `GET /api/mining/clustering` | K-Means cluster data |
-| `GET /api/mining/association` | Association insights |
-| `GET /api/mining/ml_model` | Random Forest results |
-| `GET /api/insights` | Auto-generated text insights |
-| `GET /api/export` | Download filtered CSV |
-
-All endpoints accept the same query parameters as the frontend filters.
-
----
-
-## 🛠 Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Backend | Python 3.10+, Flask, pandas, scikit-learn, NLTK |
-| Frontend | HTML5, Vanilla CSS, JavaScript (ES2020) |
-| Charts | Chart.js 4.4 |
-| ML | K-Means, Random Forest (scikit-learn) |
-| NLP | NLTK stopwords + regex word frequency |
+For in-depth viva questions, mathematical proofs, and examiner defense strategies, refer to:
+- [`docs/EXAMINER_VIVA_DEFENSE.md`](docs/EXAMINER_VIVA_DEFENSE.md)
+- [`reports/VERIFICATION_AND_VALIDATION_MATRIX.md`](reports/VERIFICATION_AND_VALIDATION_MATRIX.md)
+- [`docs/STAR_SCHEMA_SPEC.md`](docs/STAR_SCHEMA_SPEC.md)
+- [`docs/OLAP_OPERATIONS_CATALOG.md`](docs/OLAP_OPERATIONS_CATALOG.md)
+- [`docs/MODEL_BENCHMARK_REPORT.md`](docs/MODEL_BENCHMARK_REPORT.md)

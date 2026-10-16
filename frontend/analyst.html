@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayStoreIQ — Market Intelligence &amp; DWM Suite</title>
+  <meta name="description" content="Professional Google Play Store Data Mining and Business Intelligence Dashboard with real-time analytics and ML predictions." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .user-topbar-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(59, 130, 246, 0.35);
+    }
+    .btn-user-logout {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+    .btn-user-logout:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #b91c1c;
+    }
+    .nav-admin-jump {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+    .nav-admin-jump a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: #f59e0b;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+    }
+    .nav-admin-jump a:hover {
+      background: rgba(245, 158, 11, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- APP SHELL -->
+  <div class="app-shell" id="appShell">
+    <!-- Backdrop for mobile sidebar drawer -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+    <!-- ══════════════════════════════════════════════
+         USER SIDEBAR
+    ══════════════════════════════════════════════ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <span class="brand-name sidebar-text">PlayStore<strong>IQ</strong></span>
+      </div>
+
+            <nav class="sidebar-nav" role="navigation" aria-label="Analyst navigation">
+        <div class="sidebar-group-title" style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--text-muted);padding:8px 16px;letter-spacing:0.5px">
+          DWM Analytics Suite
+        </div>
+        <a href="#section-overview" class="nav-item active" data-section="overview" aria-label="Market Overview">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+          <span class="nav-label sidebar-text">Market Overview</span>
+        </a>
+        <a href="#section-olap" class="nav-item" data-section="olap" aria-label="OLAP Analysis">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+          <span class="nav-label sidebar-text">OLAP Analysis</span>
+        </a>
+        <a href="#section-predictor" class="nav-item" data-section="predictor" aria-label="Popularity Prediction">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+          <span class="nav-label sidebar-text">Popularity Prediction</span>
+        </a>
+        <a href="#section-association" class="nav-item" data-section="association" aria-label="Association Rules">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></span>
+          <span class="nav-label sidebar-text">Association Patterns</span>
+        </a>
+        <a href="#section-sentiment" class="nav-item" data-section="sentiment" aria-label="Sentiment Intelligence">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <span class="nav-label sidebar-text">Sentiment Intelligence</span>
+        </a>
+        <a href="#section-opportunity" class="nav-item" data-section="opportunity" aria-label="Opportunity Matrix">
+          <span class="nav-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg></span>
+          <span class="nav-label sidebar-text">Opportunity Matrix</span>
+        </a>
+
+        <!-- Portal jump links -->
+        <div class="nav-admin-jump hidden" id="sideAdminLinkWrap" style="margin-top:auto;border-top:1px solid var(--border);padding-top:10px;">
+          <a href="/admin.html" title="Jump to Admin Console & ML Lab" style="display:flex;align-items:center;gap:10px;padding:8px 16px;color:#f59e0b;text-decoration:none;font-size:12.5px;font-weight:700;">
+            <span>👑 Admin Console ↗</span>
+          </a>
+        </div>
+      </nav>
+
+      <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Collapse sidebar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    </aside>
+
+    <!-- ══════════════════════════════════════════════
+         MAIN CONTENT WRAPPER
+    ══════════════════════════════════════════════ -->
+    <div class="main-wrapper" id="mainWrapper">
+
+      <!-- TOP BAR -->
+      <header class="topbar" role="banner">
+        <div class="topbar-left">
+          <button class="hamburger" id="hamburger" aria-label="Toggle sidebar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div>
+            <h1 class="page-title" id="pageTitle">Market Overview</h1>
+          </div>
+        </div>
+
+                <!-- Global Search Bar -->
+        <div class="topbar-center" style="max-width:380px;width:100%;">
+          <div style="position:relative;width:100%;">
+            <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="globalSearch" placeholder="Search applications (Ctrl+K)..." style="width:100%;padding:7px 12px 7px 34px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;outline:none;" />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="icon-btn" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+            <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="icon-moon hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+
+          <!-- User Profile & Direct Sign Out -->
+          <div class="user-topbar-profile">
+            <div class="user-role-pill">
+              <span>👤</span>
+              <span id="userNameLabel">Business Analyst</span>
+            </div>
+            <button type="button" class="btn-user-logout" onclick="handleLogout()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </button>
+          </div>
+
+          <!-- Connection status -->
+          <div class="conn-status" id="connStatus" title="API connection status">
+            <span class="conn-dot" id="connDot"></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- FILTER BAR -->
+      <div class="filterbar" id="filterbar">
+        <div class="filter-chips-row" id="filterChipsRow">
+          <!-- Category chip -->
+          <div class="filter-chip-group">
+            <button class="filter-chip-trigger" id="catChipTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <span class="chip-label-text">Category</span>
+              <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="chip-dropdown" id="catDropdown" role="listbox" aria-multiselectable="true">
+              <div class="chip-search-wrap">
+                <input type="text" class="chip-search" id="catSearch" placeholder="Search category…" aria-label="Search categories" />
+              </div>
+              <div class="chip-options" id="catOptions"></div>
+            </div>
+          </div>
+
+          <!-- Type chip -->
+          <div class="filter-chip-group">
+            <button class="filter-chip-trigger" id="typeChipTrigger">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              <span class="chip-label-text">Type</span>
+              <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="chip-dropdown" id="typeDropdown">
+              <div class="chip-option" data-val="" role="option">All Types</div>
+              <div class="chip-option" data-val="free" role="option">Free</div>
+              <div class="chip-option" data-val="paid" role="option">Paid</div>
+            </div>
+          </div>
+
+          <!-- Content Rating chip -->
+          <div class="filter-chip-group">
+            <button class="filter-chip-trigger" id="crChipTrigger">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span class="chip-label-text">Content Rating</span>
+              <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="chip-dropdown" id="crDropdown">
+              <div class="chip-options" id="crOptions"></div>
+            </div>
+          </div>
+
+          <!-- Rating slider chip -->
+          <div class="filter-chip-group">
+            <button class="filter-chip-trigger" id="ratingChipTrigger">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span class="chip-label-text">Rating</span>
+              <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="chip-dropdown chip-dropdown--wide" id="ratingDropdown">
+              <p class="chip-label">Minimum Rating: <strong id="ratingRangeDisplay">1.0 ★ & above</strong></p>
+              <div class="single-range-wrap" id="ratingSliderWrap">
+                <div class="single-range-track"></div>
+                <div class="single-range-progress" id="ratingProgress"></div>
+                <input type="range" id="ratingMin" min="1.0" max="5.0" step="0.1" value="1.0" class="single-range" aria-label="Minimum rating" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Android Version chip -->
+          <div class="filter-chip-group">
+            <button class="filter-chip-trigger" id="avChipTrigger">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65-5.66 5.66a1 1 0 0 1-1.41-1.41L13.69 11H2.05A10 10 0 1 0 12 2z"/></svg>
+              <span class="chip-label-text">Android Ver</span>
+              <svg class="chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="chip-dropdown chip-dropdown--scroll" id="avDropdown">
+              <div class="chip-options" id="avOptions"></div>
+            </div>
+          </div>
+
+          <div class="filterbar-divider"></div>
+
+          <!-- Active filter chips -->
+          <div class="active-chips" id="activeChips"></div>
+
+          <!-- Reset link -->
+          <button class="reset-link hidden" id="resetBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.15"/></svg>
+            Reset filters
+          </button>
+        </div>
+
+        <!-- Timeframe Featuring Tabs (Monthly, 3M, 6M, 1Yr, All) -->
+        <div class="filterbar-timeframe-wrap" id="filterbarTimeframeWrap">
+          <div class="timeframe-tab-group" role="tablist" aria-label="Timeframe selection">
+            <button type="button" class="tf-btn" data-range="1m" id="tfBtn1m" onclick="setTimeframeRange('1m')" title="Monthly (Last 30 Days)">Monthly (M)</button>
+            <button type="button" class="tf-btn" data-range="3m" id="tfBtn3m" onclick="setTimeframeRange('3m')" title="Last 3 Months">3M</button>
+            <button type="button" class="tf-btn" data-range="6m" id="tfBtn6m" onclick="setTimeframeRange('6m')" title="Last 6 Months">6M</button>
+            <button type="button" class="tf-btn" data-range="1y" id="tfBtn1y" onclick="setTimeframeRange('1y')" title="Last 1 Year">1Yr</button>
+            <button type="button" class="tf-btn active" data-range="all" id="tfBtnAll" onclick="setTimeframeRange('all')" title="All Time Dataset">All</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════
+           MAIN CONTENT
+      ═══════════════════════════ -->
+      <main class="content" id="mainContent" role="main">
+
+        <!-- ─────────── SECTION 1: OVERVIEW ─────────── -->
+        <section id="section-overview" class="content-section">
+          <!-- KPI TILES -->
+          <div class="kpi-grid" id="kpiGrid" role="region" aria-label="Key performance indicators">
+            <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+            <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+            <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+            <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+            <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+            <div class="kpi-tile skeleton"><div class="skeleton-block h-8 w-24 mb-2"></div><div class="skeleton-block h-4 w-16"></div></div>
+          </div>
+
+          <!-- Row 2: area line + donut -->
+          <div class="grid-2-1">
+            <div class="card" id="cardUpdatedMonth">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Apps Updated Over Time</h3>
+                  <p class="card-subtitle">Monthly update activity across the dataset</p>
+                </div>
+              </div>
+              <div class="card-body chart-area">
+                <div class="skeleton-chart" id="skUpdatedMonth"></div>
+                <canvas id="updatedMonthChart" class="hidden"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <span class="chart-tag-dist">Distribution</span>
+                  <h3 class="card-title">Free vs Paid</h3>
+                  <p class="card-subtitle">Distribution by app type</p>
+                </div>
+              </div>
+              <div class="card-body chart-donut-wrap">
+                <div class="skeleton-chart" id="skFreePaid"></div>
+                <canvas id="freePaidChart" class="hidden"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION 2: CATEGORIES ─────────── -->
+        <section id="section-categories" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">Categories</h2>
+            <p class="section-desc">Distribution, installs, and ratings by app category</p>
+          </div>
+          <div class="grid-2-col">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Apps per Category</h3>
+                  <p class="card-subtitle">Click a bar to filter by category</p>
+                </div>
+              </div>
+              <div class="card-body chart-tall">
+                <div class="skeleton-chart" id="skAppsPerCat"></div>
+                <canvas id="appsPerCatChart" class="hidden"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Total Installs by Category</h3>
+                  <p class="card-subtitle">Aggregate install counts</p>
+                </div>
+              </div>
+              <div class="card-body chart-tall">
+                <div class="skeleton-chart" id="skInstallsByCat"></div>
+                <canvas id="installsByCatChart" class="hidden"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- Heatmap Matrix (Screenshot Style) -->
+          <div class="card" id="cardStoreHeatmap">
+            <div class="card-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;">
+              <div>
+                <h3 class="card-title">Store Cross-Tabulation Heatmap</h3>
+                <p class="card-subtitle">App distribution cross-tabulated by category and dimension levels</p>
+                <!-- Gradient Legend matching screenshot -->
+                <div class="heatmap-legend-wrap" style="margin-top:8px;">
+                  <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Low</span>
+                  <div style="width:130px;height:9px;border-radius:999px;background:linear-gradient(90deg, #22c55e 0%, #84cc16 25%, #eab308 50%, #f97316 75%, #ef4444 100%);box-shadow:inset 0 1px 2px rgba(0,0,0,0.2);"></div>
+                  <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">High</span>
+                </div>
+              </div>
+
+              <!-- Header Controls Toolbar -->
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <!-- Dimension Switchers -->
+                <div class="heatmap-dim-group" role="group" aria-label="Dimension selection">
+                  <button type="button" class="btn-heatmap-dim active" id="btnDimRating" onclick="switchHeatmapDim('rating')">Rating Tiers</button>
+                  <button type="button" class="btn-heatmap-dim" id="btnDimContent" onclick="switchHeatmapDim('content_rating')">Content Rating</button>
+                  <button type="button" class="btn-heatmap-dim" id="btnDimType" onclick="switchHeatmapDim('type')">Free / Paid</button>
+                  <button type="button" class="btn-heatmap-dim" id="btnDimPop" onclick="switchHeatmapDim('popularity')">Popularity</button>
+                </div>
+                <!-- Filter category search -->
+                <input type="text" id="heatmapSearch" placeholder="Filter category…" style="padding:5px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:var(--surface);color:var(--text);width:130px;" oninput="onHeatmapSearch(this.value)" />
+                <!-- Toggle Limit -->
+                <button type="button" class="btn-heatmap-dim" id="btnHeatmapLimit" onclick="toggleHeatmapLimit()" title="Toggle Top 12 vs All Categories">Show All (33)</button>
+                <!-- Export CSV -->
+                <button type="button" class="btn-heatmap-dim" onclick="exportHeatmapCSV()" title="Export current heatmap as CSV">↓ CSV</button>
+              </div>
+            </div>
+
+            <!-- Heatmap Scroll Container -->
+            <div class="card-body heatmap-wrap" id="heatmapWrap">
+              <div class="skeleton-chart" id="skHeatmap"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION 3: RATINGS & REVIEWS ─────────── -->
+        <section id="section-ratings" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">Ratings &amp; Reviews</h2>
+            <p class="section-desc">Rating distributions, content classifications, and platform requirements</p>
+          </div>
+          <div class="grid-3-col">
+            <div class="card">
+              <div class="card-header"><h3 class="card-title">Rating Distribution</h3></div>
+              <div class="card-body">
+                <div class="skeleton-chart" id="skRatingDist"></div>
+                <canvas id="ratingDistChart" class="hidden"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <span class="chart-tag-dist">Distribution</span>
+                  <h3 class="card-title">Content Rating Share</h3>
+                  <p class="card-subtitle">Audience classification distribution</p>
+                </div>
+              </div>
+              <div class="card-body chart-donut-wrap">
+                <div class="skeleton-chart" id="skContentRating"></div>
+                <canvas id="contentRatingChart" class="hidden"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><h3 class="card-title">Android Version Distribution</h3></div>
+              <div class="card-body">
+                <div class="skeleton-chart" id="skAndroidVer"></div>
+                <canvas id="androidVerChart" class="hidden"></canvas>
+              </div>
+            </div>
+          </div>
+          <!-- Reviews vs Installs scatter -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Reviews vs Installs</h3>
+                <p class="card-subtitle">Correlation by category (log scale)</p>
+              </div>
+            </div>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skReviewsInstalls"></div>
+              <canvas id="reviewsInstallsChart" class="hidden"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION 4: PRICING ─────────── -->
+        <section id="section-pricing" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">Pricing</h2>
+            <p class="section-desc">How paid app pricing relates to quality and market success</p>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Price vs Rating — Paid Apps</h3>
+                <p class="card-subtitle">Scatter of all paid apps with rating on X axis</p>
+              </div>
+            </div>
+            <div class="card-body chart-area">
+              <div class="skeleton-chart" id="skPriceRating"></div>
+              <canvas id="priceRatingChart" class="hidden"></canvas>
+            </div>
+          </div>
+          <!-- Top 10 table -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Top 10 Apps by Installs</h3>
+                <p class="card-subtitle">Click column headers to sort</p>
+              </div>
+              <div class="card-actions">
+                <span class="table-count" id="tableCount"></span>
+              </div>
+            </div>
+            <div class="card-body table-wrap">
+              <div class="skeleton-chart" id="skTable"></div>
+              <div id="top10TableWrap" class="hidden">
+                <table class="data-table" id="top10Table" role="grid" aria-label="Top 10 apps by installs">
+                  <thead>
+                    <tr>
+                      <th class="th-sortable" data-col="App">App <span class="sort-icon">↕</span></th>
+                      <th class="th-sortable" data-col="Category">Category <span class="sort-icon">↕</span></th>
+                      <th class="th-sortable th-num" data-col="Installs">Installs <span class="sort-icon">↕</span></th>
+                      <th class="th-sortable th-num" data-col="Rating">Rating <span class="sort-icon">↕</span></th>
+                      <th class="th-right">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody id="top10Body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION 3: OLAP ANALYSIS ─────────── -->
+        <section id="section-olap" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">OLAP Multi-Dimensional Analytics</h2>
+            <p class="section-desc">Relational OLAP (ROLAP) operations executed natively on the Star Schema Data Warehouse</p>
+          </div>
+
+          <!-- INSIGHT VIEW -->
+          <div id="olap-insight-view">
+            <div class="olap-controls-card">
+              <div class="olap-tabs">
+                <button class="olap-tab-btn active" data-olap="rollup" id="tabRollup">
+                  <span>🔄 Roll-Up</span>
+                </button>
+                <button class="olap-tab-btn" data-olap="drilldown" id="tabDrilldown">
+                  <span>🔍 Drill-Down</span>
+                </button>
+                <button class="olap-tab-btn" data-olap="slice" id="tabSlice">
+                  <span>🔪 Slice</span>
+                </button>
+                <button class="olap-tab-btn" data-olap="dice" id="tabDice">
+                  <span>🎲 Dice</span>
+                </button>
+                <button class="olap-tab-btn" data-olap="pivot" id="tabPivot">
+                  <span>📊 Pivot</span>
+                </button>
+              </div>
+
+              <!-- Panel for Roll-up -->
+              <div class="olap-panel" id="panelRollup">
+                <div class="olap-panel-body">
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapRollupDim">Hierarchy Dimension</label>
+                    <select class="filter-select" id="olapRollupDim">
+                      <option value="category">App ➔ Genre ➔ Category</option>
+                      <option value="quarter">Date ➔ Quarter</option>
+                      <option value="month">Date ➔ Month</option>
+                      <option value="year">Date ➔ Year</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="btnExecuteRollup">Execute Roll-Up Query</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel for Drill-down -->
+              <div class="olap-panel hidden" id="panelDrilldown">
+                <div class="olap-panel-body">
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapDrillCategory">Category to Decompose</label>
+                    <select class="filter-select" id="olapDrillCategory">
+                      <option value="GAME">GAME ➔ Sub-genres</option>
+                      <option value="FAMILY">FAMILY ➔ Sub-genres</option>
+                      <option value="TOOLS">TOOLS ➔ Sub-genres</option>
+                      <option value="PRODUCTIVITY">PRODUCTIVITY ➔ Sub-genres</option>
+                      <option value="FINANCE">FINANCE ➔ Sub-genres</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="btnExecuteDrilldown">Execute Drill-Down Query</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel for Slice -->
+              <div class="olap-panel hidden" id="panelSlice">
+                <div class="olap-panel-body">
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapSliceDim">Slice Dimension</label>
+                    <select class="filter-select" id="olapSliceDim">
+                      <option value="type:Free">Monetization: Free Apps</option>
+                      <option value="type:Paid">Monetization: Paid Apps</option>
+                      <option value="content_rating:Everyone">Audience: Everyone</option>
+                      <option value="content_rating:Teen">Audience: Teen</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="btnExecuteSlice">Execute Slice Cut</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel for Dice -->
+              <div class="olap-panel hidden" id="panelDice">
+                <div class="olap-panel-body">
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapDiceCats">Categories Sub-cube</label>
+                    <select class="filter-select" id="olapDiceCats">
+                      <option value="GAME,FAMILY">GAME &amp; FAMILY</option>
+                      <option value="BUSINESS,FINANCE,PRODUCTIVITY">BUSINESS, FINANCE &amp; PRODUCTIVITY</option>
+                      <option value="TOOLS,COMMUNICATION,SOCIAL">TOOLS, COMMUNICATION &amp; SOCIAL</option>
+                    </select>
+                  </div>
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapDiceType">Pricing</label>
+                    <select class="filter-select" id="olapDiceType">
+                      <option value="Free">Free Only</option>
+                      <option value="Paid">Paid Only</option>
+                    </select>
+                  </div>
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapDiceAudience">Content Rating</label>
+                    <select class="filter-select" id="olapDiceAudience">
+                      <option value="Everyone">Everyone</option>
+                      <option value="Teen">Teen</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="btnExecuteDice">Execute Sub-Cube Dice</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel for Pivot -->
+              <div class="olap-panel hidden" id="panelPivot">
+                <div class="olap-panel-body">
+                  <div class="filter-group">
+                    <label class="filter-label" for="olapPivotMetric">Cross-Tabulation Metric</label>
+                    <select class="filter-select" id="olapPivotMetric">
+                      <option value="installs">Total Installs (SUM)</option>
+                      <option value="rating">Average Rating (AVG)</option>
+                      <option value="count">Application Count (COUNT)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="btnExecutePivot">Execute Pivot Matrix</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- OLAP Visualization & SQL Inspection Output -->
+            <div class="grid-2-col">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <h3 class="card-title" id="olapChartTitle">OLAP Visual Representation</h3>
+                    <p class="card-subtitle" id="olapChartSubtitle">Multi-dimensional aggregation</p>
+                  </div>
+                  <span class="badge-lift" id="olapQueryTime">0 ms</span>
+                </div>
+                <div class="card-body chart-area">
+                  <canvas id="olapChart"></canvas>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                  <div>
+                    <h3 class="card-title">Warehouse Aggregation Matrix</h3>
+                    <p class="card-subtitle">Multi-dimensional Star Schema query records</p>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="badge-lift" id="olapRowCount">0 Records</span>
+                    <button type="button" class="btn-heatmap-dim" onclick="switchDwmTab('olap', 'tech')" title="Inspect native executed SQL in Technical tab" style="font-size:11px;padding:4px 8px;cursor:pointer;">⚙️ View SQL in Tech Tab</button>
+                  </div>
+                </div>
+                <div class="card-body" style="padding: 12px 16px 16px;">
+                  <div class="olap-table-scroll" id="olapTableWrapper">
+                    <div style="padding:32px;text-align:center;color:var(--text-muted);font-size:12px;">Loading warehouse aggregation matrix...</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION 5: SENTIMENT (USER OPINION INTELLIGENCE) ─────────── -->
+        <section id="section-sentiment" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">User Opinion Intelligence (Sentiment)</h2>
+            <p class="section-desc">Natural language sentiment aggregation across customer reviews with category-level polarity comparison</p>
+          </div>
+
+          <!-- INSIGHT VIEW -->
+          <div id="sent-insight-view">
+            <div class="grid-3-col">
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <span class="chart-tag-dist">Distribution</span>
+                    <h3 class="card-title">Overall Sentiment Distribution</h3>
+                    <p class="card-subtitle">Polarity spread across 24k+ reviews</p>
+                  </div>
+                </div>
+                <div class="card-body chart-donut-wrap">
+                  <div class="skeleton-chart" id="skSentimentDonut"></div>
+                  <canvas id="sentimentDonut" class="hidden"></canvas>
+                </div>
+                <div class="sentiment-stats" id="sentimentStats"></div>
+              </div>
+              <div class="card col-span-2">
+                <div class="card-header"><h3 class="card-title">Sentiment Polarity by Category</h3></div>
+                <div class="card-body chart-area">
+                  <div class="skeleton-chart" id="skSentByCat"></div>
+                  <canvas id="sentByCatChart" class="hidden"></canvas>
+                </div>
+              </div>
+            </div>
+            <!-- Word cloud -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Top Sentiment Keywords</h3>
+                  <p class="card-subtitle">Most frequent terms extracted from high-polarity user feedback</p>
+                </div>
+              </div>
+              <div class="wordcloud-wrap" id="wordcloudWrap">
+                <div class="skeleton-chart" id="skWordcloud"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+        <!-- ─────────── SECTION 8: ASSOCIATION RULES (APRIORI) ─────────── -->
+        <section id="section-association" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">Pattern Discovery (Association Mining)</h2>
+            <p class="section-desc">Apriori rule mining uncovering frequently associated app characteristics across 7,242 transactions</p>
+          </div>
+
+          <!-- INSIGHT VIEW -->
+          <div id="assoc-insight-view">
+            <!-- Exemplar Discovered Pattern Callout -->
+            <div class="card mb-4" style="background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(16,185,129,0.08));border:1px solid rgba(37,99,235,0.25);">
+              <div class="card-body" style="padding:16px 20px;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--primary);letter-spacing:0.5px;margin-bottom:8px">⭐ Top Discovered Market Association</div>
+                <div style="display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px">
+                  <span class="badge-lift" style="font-size:13px;padding:4px 10px;">Type = Free</span>
+                  <span>+</span>
+                  <span class="badge-lift" style="font-size:13px;padding:4px 10px;">Content = Everyone</span>
+                  <span>+</span>
+                  <span class="badge-lift" style="font-size:13px;padding:4px 10px;">Rating &ge; 4.2★</span>
+                  <span style="color:var(--primary);font-size:18px;">➔</span>
+                  <span class="badge-best" style="font-size:13px;padding:4px 10px;">Popularity = High (>1M Installs)</span>
+                </div>
+                <div style="display:flex;gap:18px;font-size:12.5px;color:var(--text-2);">
+                  <span><strong>Support:</strong> 42.6% (Appears in 3,085 apps)</span>
+                  <span><strong>Confidence:</strong> 87.3% (Probability given antecedents)</span>
+                  <span><strong>Lift:</strong> 1.42 (42% higher probability than random chance)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="olap-controls-card mb-4">
+              <div class="olap-panel-body">
+                <div class="filter-group">
+                  <label class="filter-label" for="aprioriMinLift">Minimum Lift Threshold</label>
+                  <select class="filter-select" id="aprioriMinLift">
+                    <option value="1.2">Lift &ge; 1.20 (Significant dependency)</option>
+                    <option value="1.5">Lift &ge; 1.50 (High dependency)</option>
+                    <option value="2.0">Lift &ge; 2.00 (Very strong dependency)</option>
+                    <option value="3.0">Lift &ge; 3.00 (Extreme dependency)</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label class="filter-label" for="aprioriMinConf">Minimum Confidence</label>
+                  <select class="filter-select" id="aprioriMinConf">
+                    <option value="0.5">Confidence &ge; 50%</option>
+                    <option value="0.7">Confidence &ge; 70%</option>
+                    <option value="0.85">Confidence &ge; 85%</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <label class="filter-label" for="aprioriSort">Sort By</label>
+                  <select class="filter-select" id="aprioriSort">
+                    <option value="lift">Lift (Descending)</option>
+                    <option value="confidence">Confidence (Descending)</option>
+                    <option value="support">Support (Descending)</option>
+                  </select>
+                </div>
+                <div>
+                  <button class="btn btn-primary" id="btnFilterApriori">Filter Rules</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Discovered Association Rules</h3>
+                  <p class="card-subtitle" id="aprioriRuleCount">Displaying rules generated by the Apriori algorithm</p>
+                </div>
+              </div>
+              <div class="card-body table-wrap">
+                <table class="dwm-table" id="aprioriTable">
+                  <thead>
+                    <tr>
+                      <th>Rule ID</th>
+                      <th>Antecedent (If X)</th>
+                      <th>Consequent (Then Y)</th>
+                      <th>Support (%)</th>
+                      <th>Confidence (%)</th>
+                      <th>Lift Score</th>
+                    </tr>
+                  </thead>
+                  <tbody id="aprioriTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION: POPULARITY PREDICTION (LEAKAGE-FREE) ─────────── -->
+        <section id="section-predictor" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">Popularity Tier Prediction</h2>
+            <p class="section-desc">Pre-launch market reach inference using strictly intrinsic metadata (Zero Target Leakage)</p>
+          </div>
+
+          <!-- INSIGHT VIEW -->
+          <div id="pred-insight-view">
+            <div class="card">
+              <div class="card-body">
+                <div class="predict-layout">
+                  <div class="predict-form">
+                    <div class="predict-grid">
+                      <div class="predict-field">
+                        <label class="pf-label" for="pAppName">App Name</label>
+                        <input type="text" id="pAppName" class="pf-input" value="Super App Studio" placeholder="e.g. Brain Challenge 3D" />
+                      </div>
+                      <div class="predict-field">
+                        <label class="pf-label" for="pCategory">Category</label>
+                        <select id="pCategory" class="pf-input">
+                          <option value="GAME">GAME</option>
+                        </select>
+                      </div>
+                      <div class="predict-field">
+                        <label class="pf-label" for="pContentRating">Content Rating</label>
+                        <select id="pContentRating" class="pf-input">
+                          <option value="Everyone">Everyone</option>
+                          <option value="Teen">Teen</option>
+                          <option value="Mature 17+">Mature 17+</option>
+                          <option value="Everyone 10+">Everyone 10+</option>
+                        </select>
+                      </div>
+                      <div class="predict-field">
+                        <label class="pf-label" for="pType">Monetization Type</label>
+                        <select id="pType" class="pf-input">
+                          <option value="1">Free ($0.00)</option>
+                          <option value="0">Paid Premium</option>
+                        </select>
+                      </div>
+                      <div class="predict-field">
+                        <label class="pf-label" for="pPrice">Price ($ USD)</label>
+                        <input type="number" id="pPrice" class="pf-input" value="0" min="0" max="400" step="0.5" />
+                      </div>
+                      <div class="predict-field">
+                        <label class="pf-label" for="pSize">Size (MB)</label>
+                        <input type="number" id="pSize" class="pf-input" value="25" min="0.5" max="150" step="1" />
+                      </div>
+                      <div class="predict-field">
+                        <label class="pf-label" for="pAndroidVer">Min Android OS</label>
+                        <select id="pAndroidVer" class="pf-input">
+                          <option value="4.1">Android 4.1+ (Jelly Bean)</option>
+                          <option value="5.0" selected>Android 5.0+ (Lollipop)</option>
+                          <option value="7.0">Android 7.0+ (Nougat)</option>
+                          <option value="8.0">Android 8.0+ (Oreo)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <button class="predict-btn" id="predictBtn" onclick="runPrediction()">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                      Run Popularity Prediction
+                    </button>
+                  </div>
+
+                  <!-- Result panel -->
+                  <div class="predict-result hidden" id="predictResult">
+                    <div class="pr-verdict" id="prVerdict">
+                      <div class="pr-emoji" id="prEmoji">🚀</div>
+                      <div class="pr-info">
+                        <div class="pr-label" id="prLabel">High / Viral Reach</div>
+                        <div class="pr-rating" id="prRating">Est. Install Reach: &gt; 1,000,000 Installs</div>
+                      </div>
+                      <div class="pr-confidence" id="prConf">85%<span>confidence</span></div>
+                    </div>
+                    
+                    <div class="pr-bars">
+                      <div class="pr-bar-row">
+                        <span class="pr-bar-label">High (>1M)</span>
+                        <div class="pr-bar-track"><div class="pr-bar-fill pr-bar-high" id="prBarHigh"></div></div>
+                        <span class="pr-bar-pct" id="prPctHigh">—</span>
+                      </div>
+                      <div class="pr-bar-row">
+                        <span class="pr-bar-label">Mid (10k-1M)</span>
+                        <div class="pr-bar-track"><div class="pr-bar-fill" style="background:#f59e0b" id="prBarMid"></div></div>
+                        <span class="pr-bar-pct" id="prPctMid">—</span>
+                      </div>
+                      <div class="pr-bar-row">
+                        <span class="pr-bar-label">Low (<10k)</span>
+                        <div class="pr-bar-track"><div class="pr-bar-fill pr-bar-low" id="prBarLow"></div></div>
+                        <span class="pr-bar-pct" id="prPctLow">—</span>
+                      </div>
+                    </div>
+
+                    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;">
+                      <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Model Inference Factors</div>
+                      <div style="font-size:12.5px;color:var(--text-2);line-height:1.5" id="prFactors">
+                        Evaluating intrinsic features against Gradient Boosting champion classifier (Macro F1: 0.5576).
+                      </div>
+                    </div>
+
+                    <div class="pr-similar" id="prSimilar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION: CATEGORY OPPORTUNITY MATRIX & INTELLIGENCE ─────────── -->
+        <section id="section-opportunity" class="content-section">
+          <div class="section-heading">
+            <h2 class="section-title">Category Opportunity Matrix &amp; Intelligence</h2>
+            <p class="section-desc">Strategic 2x2 market positioning matrix derived from star schema warehouse dimensions</p>
+          </div>
+
+          <!-- INSIGHT VIEW -->
+          <div id="opp-insight-view">
+            <!-- 2x2 Matrix Grid -->
+            <div class="opportunity-matrix-grid">
+              <div class="quadrant-box q-leaders">
+                <div class="quadrant-title">🌟 Market Leaders (High Rating, High Installs)</div>
+                <div class="quadrant-desc">Category strongholds with vast organic adoption and high customer satisfaction.</div>
+                <div class="quadrant-tags" id="quadLeaders">
+                  <span class="quadrant-tag">GAME</span>
+                  <span class="quadrant-tag">FAMILY</span>
+                  <span class="quadrant-tag">PHOTOGRAPHY</span>
+                </div>
+              </div>
+              <div class="quadrant-box q-opportunities">
+                <div class="quadrant-title">🚀 High Opportunity (High Rating, Moderate Installs)</div>
+                <div class="quadrant-desc">Quality-driven sectors with underserved audiences and strong monetization upside.</div>
+                <div class="quadrant-tags" id="quadOpp">
+                  <span class="quadrant-tag">EDUCATION</span>
+                  <span class="quadrant-tag">HEALTH &amp; FITNESS</span>
+                  <span class="quadrant-tag">BOOKS &amp; REFERENCE</span>
+                </div>
+              </div>
+              <div class="quadrant-box q-mass">
+                <div class="quadrant-title">🌊 Mass Market Utilities (High Installs, Average Rating)</div>
+                <div class="quadrant-desc">High-volume essential utilities where retention depends on functional execution.</div>
+                <div class="quadrant-tags" id="quadMass">
+                  <span class="quadrant-tag">COMMUNICATION</span>
+                  <span class="quadrant-tag">TOOLS</span>
+                  <span class="quadrant-tag">PRODUCTIVITY</span>
+                </div>
+              </div>
+              <div class="quadrant-box q-saturated">
+                <div class="quadrant-title">⚠️ Saturated / Needs Improvement (Lower Rating, Low Installs)</div>
+                <div class="quadrant-desc">Challenging spaces with high customer friction or intense market fragmentation.</div>
+                <div class="quadrant-tags" id="quadSaturated">
+                  <span class="quadrant-tag">DATING</span>
+                  <span class="quadrant-tag">LIFESTYLE</span>
+                  <span class="quadrant-tag">FINANCE</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category Intelligence Table -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3 class="card-title">Category Market Intelligence</h3>
+                  <p class="card-subtitle">Aggregated performance across 33 conformed category dimensions</p>
+                </div>
+              </div>
+              <div class="card-body table-wrap">
+                <table class="dwm-table" id="catIntelTable">
+                  <thead>
+                    <tr>
+                      <th>Category</th>
+                      <th>Avg Rating</th>
+                      <th>Median Installs</th>
+                      <th>Total Apps</th>
+                      <th>Paid Share</th>
+                      <th>Quadrant Classification</th>
+                    </tr>
+                  </thead>
+                  <tbody id="catIntelBody">
+                    <tr><td colspan="6" style="text-align:center;padding:16px;">Loading category intelligence…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─────────── SECTION: TRENDING APPS (DISCOVERY) ─────────── -->
+        
+
+      <input type="hidden" id="dateStart" /><input type="hidden" id="dateEnd" /></main>
+    <!-- Heatmap Cell Drill-Down Modal -->
+  <div class="modal-overlay" id="heatmapDrillModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999;">
+    <div class="modal-box" style="background:var(--surface);border:1px solid var(--border);border-radius:14px;max-width:720px;width:100%;padding:24px 28px;box-shadow:var(--shadow);position:relative;">
+      <button type="button" class="modal-close-btn" onclick="closeHeatmapDrillModal()" style="position:absolute;top:14px;right:16px;background:transparent;border:none;font-size:22px;color:var(--text-muted);cursor:pointer;">&times;</button>
+      <h2 class="modal-title" id="drillModalTitle" style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;">Cell Applications Drill-Down</h2>
+      <p class="modal-desc" id="drillModalDesc" style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">Applications matching selected category and tier</p>
+      <div style="max-height:360px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
+        <table class="data-table" style="width:100%;font-size:12.5px;">
+          <thead>
+            <tr>
+              <th>App Name</th>
+              <th>Category</th>
+              <th class="th-num">Rating</th>
+              <th class="th-num">Installs</th>
+              <th class="th-num">Reviews</th>
+              <th class="th-right">Type</th>
+            </tr>
+          </thead>
+          <tbody id="drillModalBody">
+            <tr><td colspan="6" style="text-align:center;padding:16px;">Loading applications…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="psToast" class="ps-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="analyst.js?v=1"></script>
+</body>
+</html>

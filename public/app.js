@@ -5,7 +5,7 @@
 
 "use strict";
 
-const API = (window.location.protocol === "file:" || window.location.port === "5500" || window.location.port === "3000")
+const API = (window.location.protocol === "file:" || (window.location.port && window.location.port !== "5000" && window.location.port !== "80" && window.location.port !== "443"))
   ? "http://127.0.0.1:5000/api"
   : "/api";
 
@@ -210,6 +210,118 @@ function chartDefaults(extra = {}) {
     ...extra
   };
 }
+
+/* ── Donut Distribution Callout Plugin (Leader Lines + Outer Percentages) ── */
+const DIST_PALETTE = ["#334155", "#EF4444", "#F97316", "#8B5CF6", "#10B981", "#14B8A6", "#3B82F6", "#EC4899"];
+
+const donutCalloutPlugin = {
+  id: "donutCallout",
+  afterDatasetsDraw(chart, _args, pluginOptions) {
+    const meta = chart.getDatasetMeta(0);
+    if (!meta || !meta.data || !meta.data.length) return;
+    const dataset = chart.data.datasets[0];
+    if (!dataset || !dataset.data) return;
+
+    const total = dataset.data.reduce((sum, v) => sum + (Number(v) || 0), 0);
+    if (total <= 0) return;
+
+    const ctx = chart.ctx;
+    const minPct = pluginOptions?.minPercent ?? 1.5;
+
+    const items = [];
+    meta.data.forEach((element, i) => {
+      const val = Number(dataset.data[i]) || 0;
+      if (val <= 0 || element.hidden) return;
+
+      const pct = (val / total) * 100;
+      if (pct < minPct) return;
+
+      const midAngle = (element.startAngle + element.endAngle) / 2;
+      const cx = element.x;
+      const cy = element.y;
+      const r = element.outerRadius;
+
+      const cos = Math.cos(midAngle);
+      const sin = Math.sin(midAngle);
+
+      // Start point at outer arc
+      const x0 = cx + cos * (r + 2);
+      const y0 = cy + sin * (r + 2);
+
+      // Elbow point radially outward
+      const elbowDist = r + 15;
+      const x1 = cx + cos * elbowDist;
+      const y1 = cy + sin * elbowDist;
+
+      // Horizontal leader line
+      const isRight = cos >= 0;
+      const armLength = 11;
+      const x2 = x1 + (isRight ? armLength : -armLength);
+      const y2 = y1;
+
+      // Slice color for line and percentage text
+      let color = (dataset.calloutColors && dataset.calloutColors[i])
+        || (Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[i] : null)
+        || (Array.isArray(dataset.borderColor) ? dataset.borderColor[i] : null)
+        || "#3B82F6";
+      if (typeof color === "string") {
+        color = color.replace(/cc$/, "").replace(/99$/, "");
+      }
+
+      items.push({
+        x0, y0,
+        x1, y1,
+        x2, y2,
+        isRight,
+        color,
+        pct: Math.round(pct),
+        origY: y1
+      });
+    });
+
+    if (!items.length) return;
+
+    // Anti-collision separation for left and right callouts
+    const leftItems = items.filter(it => !it.isRight).sort((a, b) => a.y2 - b.y2);
+    const rightItems = items.filter(it => it.isRight).sort((a, b) => a.y2 - b.y2);
+
+    function separateLabels(group) {
+      for (let i = 1; i < group.length; i++) {
+        if (group[i].y2 - group[i - 1].y2 < 16) {
+          const shift = 16 - (group[i].y2 - group[i - 1].y2);
+          group[i].y2 += shift;
+          group[i].y1 += shift * 0.4;
+        }
+      }
+    }
+    separateLabels(leftItems);
+    separateLabels(rightItems);
+
+    ctx.save();
+    items.forEach(it => {
+      // 1. Draw leader line with elbow
+      ctx.beginPath();
+      ctx.moveTo(it.x0, it.y0);
+      ctx.lineTo(it.x1, it.y1);
+      ctx.lineTo(it.x2, it.y2);
+      ctx.strokeStyle = it.color;
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.stroke();
+
+      // 2. Draw percentage text matching slice color
+      const textX = it.x2 + (it.isRight ? 4 : -4);
+      const textY = it.y2;
+      ctx.font = "700 11px 'Inter', system-ui, -apple-system, sans-serif";
+      ctx.fillStyle = it.color;
+      ctx.textAlign = it.isRight ? "left" : "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`${it.pct}%`, textX, textY);
+    });
+    ctx.restore();
+  }
+};
 
 /* Stars HTML helper */
 function starRating(r) {
@@ -652,11 +764,12 @@ function updateActiveChips() {
       }
     }
     addChip(`📅 ${labelText}`, () => {
-      state.timeRange = "12";
+      state.timeRange = "all";
       state.customStart = "";
       state.customEnd = "";
-      if (monthSelectEl) monthSelectEl.value = "";
-      document.querySelectorAll(".dr-btn").forEach(b => b.classList.toggle("active", b.dataset.val === "12"));
+      const mSel = document.getElementById("monthSelect");
+      if (mSel) mSel.value = "";
+      document.querySelectorAll(".dr-btn").forEach(b => b.classList.toggle("active", b.dataset.val === "all"));
       updateActiveChips(); updateResetBtn(); renderAll();
     });
   }
@@ -671,7 +784,8 @@ function updateActiveChips() {
   if (state.search) {
     addChip(`"${state.search}"`, () => {
       state.search = "";
-      document.getElementById("globalSearch").value = "";
+      const sInput = document.getElementById("globalSearch");
+      if (sInput) sInput.value = "";
       updateActiveChips(); updateResetBtn(); renderAll();
     });
   }
@@ -680,32 +794,48 @@ function updateActiveChips() {
 function updateResetBtn() {
   const hasFilters = state.categories.length || state.freePaid || state.contentRating ||
     state.ratingMin !== "1" || state.ratingMax !== "5" || state.androidVersion || state.search;
-  document.getElementById("resetBtn").classList.toggle("hidden", !hasFilters);
+  const btn = document.getElementById("resetBtn");
+  if (btn) btn.classList.toggle("hidden", !hasFilters);
 }
 
-document.getElementById("resetBtn").addEventListener("click", resetAllFilters);
+const resetBtnEl = document.getElementById("resetBtn");
+if (resetBtnEl) resetBtnEl.addEventListener("click", resetAllFilters);
+
 function resetAllFilters() {
-  state = { ...state, categories: [], freePaid: "", contentRating: "", ratingMin: "1", ratingMax: "5", androidVersion: "", search: "", timeRange: "12", customStart: "", customEnd: "" };
-  document.getElementById("globalSearch").value = "";
-  if (rMin) rMin.value = "1";
-  if (monthSelectEl) monthSelectEl.value = "";
-  document.querySelectorAll(".dr-btn").forEach(b => b.classList.toggle("active", b.dataset.val === "12"));
-  updateRatingProgress();
+  state = {
+    ...state,
+    categories: [],
+    freePaid: "",
+    contentRating: "",
+    ratingMin: "1",
+    ratingMax: "5",
+    androidVersion: "",
+    search: "",
+    timeRange: "all",
+    customStart: "",
+    customEnd: ""
+  };
+  const searchInput = document.getElementById("globalSearch");
+  if (searchInput) searchInput.value = "";
+  if (rMin) {
+    rMin.value = "1";
+    updateRatingProgress();
+    updateRatingChipLabel();
+  }
+  const mSel = document.getElementById("monthSelect");
+  if (mSel) mSel.value = "";
+  document.querySelectorAll(".dr-btn").forEach(b => b.classList.toggle("active", b.dataset.val === "all"));
   updateChipTrigger("catChipTrigger", "Category");
   updateChipTrigger("typeChipTrigger", "Type");
   updateChipTrigger("crChipTrigger", "Content Rating");
   updateChipTrigger("ratingChipTrigger", "Rating");
   updateChipTrigger("avChipTrigger", "Android Ver");
-  document.getElementById("catChipTrigger").querySelectorAll("*").forEach(() => {});
   renderCatOptions(allCats);
   buildCROptions(metaData.contentRatings || []);
   buildAVOptions(metaData.androidVersions || []);
   document.querySelectorAll("#typeDropdown .chip-option").forEach(o => o.classList.toggle("selected", o.dataset.val === ""));
   updateActiveChips();
   updateResetBtn();
-  // Reset time range to 12M
-  state.timeRange = "12";
-  document.querySelectorAll(".dr-btn").forEach(b => b.classList.toggle("active", b.dataset.val === "12"));
   renderAll();
 }
 
@@ -889,21 +1019,50 @@ async function renderFreePaid() {
   destroyChart("freePaid");
   revealChart("skFreePaid", "freePaidChart");
   const ctx = document.getElementById("freePaidChart").getContext("2d");
+  const t = tok();
+  const total = (data.free || 0) + (data.paid || 0);
+  const colors = ["#10B981", "#F97316"];
   charts.freePaid = new Chart(ctx, {
     type: "doughnut",
+    plugins: [donutCalloutPlugin],
     data: {
-      labels: ["Free","Paid"],
+      labels: ["Free Apps", "Paid Apps"],
       datasets: [{
         data: [data.free, data.paid],
-        backgroundColor: [CHART_COLORS[0]+"cc", CHART_COLORS[3]+"cc"],
-        borderColor: [CHART_COLORS[0], CHART_COLORS[3]], borderWidth: 2,
+        backgroundColor: colors,
+        calloutColors: colors,
+        borderColor: t.surface,
+        borderWidth: 3,
         hoverOffset: 6,
       }]
     },
-    options: { ...chartDefaults({ scales: {} }), cutout: "68%",
-      plugins: { ...chartDefaults().plugins,
-        tooltip: { ...chartDefaults().plugins.tooltip,
-          callbacks: { label: ctx => ` ${ctx.label}: ${fmtNum(ctx.raw)}` }
+    options: {
+      ...chartDefaults({ scales: {} }),
+      cutout: "64%",
+      layout: {
+        padding: { top: 18, bottom: 18, left: 42, right: 14 }
+      },
+      plugins: {
+        ...chartDefaults().plugins,
+        legend: {
+          display: true,
+          position: "right",
+          align: "center",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            boxWidth: 7,
+            boxHeight: 7,
+            padding: 12,
+            color: t.text2,
+            font: { family: "'Inter',system-ui,sans-serif", size: 11, weight: "500" }
+          }
+        },
+        tooltip: {
+          ...chartDefaults().plugins.tooltip,
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${fmtNum(ctx.raw)} (${total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0}%)`
+          }
         }
       }
     }
@@ -1008,19 +1167,51 @@ async function renderContentRating() {
   destroyChart("contentRating");
   revealChart("skContentRating", "contentRatingChart");
   const ctx = document.getElementById("contentRatingChart").getContext("2d");
+  const t = tok();
+  const total = data.reduce((s, d) => s + (d.count || 0), 0);
+  const palette = DIST_PALETTE.slice(0, data.length);
   charts.contentRating = new Chart(ctx, {
     type: "doughnut",
+    plugins: [donutCalloutPlugin],
     data: {
       labels: data.map(d => d.contentRating),
-      datasets: [{ data: data.map(d => d.count),
-        backgroundColor: CHART_COLORS.map(c => c + "cc"),
-        borderColor: CHART_COLORS, borderWidth: 2, hoverOffset: 6,
+      datasets: [{
+        data: data.map(d => d.count),
+        backgroundColor: palette,
+        calloutColors: palette,
+        borderColor: t.surface,
+        borderWidth: 3,
+        hoverOffset: 6,
       }]
     },
-    options: { ...chartDefaults({ scales: {} }), cutout: "58%",
-      plugins: { ...chartDefaults().plugins,
-        legend: { ...chartDefaults().plugins.legend, position: "bottom" },
-        tooltip: { ...chartDefaults().plugins.tooltip, callbacks: { label: ctx => ` ${ctx.label}: ${fmtNum(ctx.raw)}` } }
+    options: {
+      ...chartDefaults({ scales: {} }),
+      cutout: "62%",
+      layout: {
+        padding: { top: 18, bottom: 18, left: 45, right: 14 }
+      },
+      plugins: {
+        ...chartDefaults().plugins,
+        legend: {
+          display: true,
+          position: "right",
+          align: "center",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            boxWidth: 7,
+            boxHeight: 7,
+            padding: 10,
+            color: t.text2,
+            font: { family: "'Inter',system-ui,sans-serif", size: 11, weight: "500" }
+          }
+        },
+        tooltip: {
+          ...chartDefaults().plugins.tooltip,
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${fmtNum(ctx.raw)} (${total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0}%)`
+          }
+        }
       },
       onClick(_, items) {
         if (!items.length) return;
@@ -1223,18 +1414,51 @@ async function renderSentiment() {
   destroyChart("sentDonut");
   revealChart("skSentimentDonut", "sentimentDonut");
   const ctx1 = document.getElementById("sentimentDonut").getContext("2d");
+  const t = tok();
+  const sentColors = ["#10B981", "#EF4444", "#F59E0B"];
   charts.sentDonut = new Chart(ctx1, {
     type: "doughnut",
+    plugins: [donutCalloutPlugin],
     data: {
-      labels: ["Positive","Negative","Neutral"],
+      labels: ["Positive", "Negative", "Neutral"],
       datasets: [{
-        data: [ov.Positive, ov.Negative, ov.Neutral],
-        backgroundColor: ["#10B981cc","#EF4444cc","#F59E0Bcc"],
-        borderColor: ["#10B981","#EF4444","#F59E0B"], borderWidth: 2, hoverOffset: 6,
+        data: [ov.Positive || 0, ov.Negative || 0, ov.Neutral || 0],
+        backgroundColor: sentColors,
+        calloutColors: sentColors,
+        borderColor: t.surface,
+        borderWidth: 3,
+        hoverOffset: 6,
       }]
     },
-    options: { ...chartDefaults({ scales: {} }), cutout: "65%",
-      plugins: { ...chartDefaults().plugins, legend: { display: false } }
+    options: {
+      ...chartDefaults({ scales: {} }),
+      cutout: "62%",
+      layout: {
+        padding: { top: 18, bottom: 18, left: 40, right: 14 }
+      },
+      plugins: {
+        ...chartDefaults().plugins,
+        legend: {
+          display: true,
+          position: "right",
+          align: "center",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            boxWidth: 7,
+            boxHeight: 7,
+            padding: 12,
+            color: t.text2,
+            font: { family: "'Inter',system-ui,sans-serif", size: 11, weight: "500" }
+          }
+        },
+        tooltip: {
+          ...chartDefaults().plugins.tooltip,
+          callbacks: {
+            label: ctx => ` ${ctx.label}: ${fmtNum(ctx.raw)} (${total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0}%)`
+          }
+        }
+      }
     }
   });
 

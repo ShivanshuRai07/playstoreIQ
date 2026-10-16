@@ -415,6 +415,7 @@
           <div class="card">
             <div class="card-header">
               <div>
+                <span class="chart-tag-dist">Distribution</span>
                 <h3 class="card-title">Free vs Paid</h3>
                 <p class="card-subtitle">Distribution by app type</p>
               </div>
@@ -489,7 +490,13 @@
             </div>
           </div>
           <div class="card">
-            <div class="card-header"><h3 class="card-title">Content Rating Share</h3></div>
+            <div class="card-header">
+              <div>
+                <span class="chart-tag-dist">Distribution</span>
+                <h3 class="card-title">Content Rating Share</h3>
+                <p class="card-subtitle">Audience classification distribution</p>
+              </div>
+            </div>
             <div class="card-body chart-donut-wrap">
               <div class="skeleton-chart" id="skContentRating"></div>
               <canvas id="contentRatingChart" class="hidden"></canvas>
@@ -575,7 +582,13 @@
         </div>
         <div class="grid-3-col">
           <div class="card">
-            <div class="card-header"><h3 class="card-title">Overall Sentiment</h3></div>
+            <div class="card-header">
+              <div>
+                <span class="chart-tag-dist">Distribution</span>
+                <h3 class="card-title">Overall Sentiment</h3>
+                <p class="card-subtitle">Polarity spread across verified reviews</p>
+              </div>
+            </div>
             <div class="card-body chart-donut-wrap">
               <div class="skeleton-chart" id="skSentimentDonut"></div>
               <canvas id="sentimentDonut" class="hidden"></canvas>

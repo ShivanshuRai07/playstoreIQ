@@ -1,0 +1,92 @@
+{
+  "best_model": "Gradient Boosting",
+  "evaluation_criterion": "Macro F1-Score on untouched test set",
+  "test_samples_count": 1449,
+  "train_samples_count": 5793,
+  "leaderboard": [
+    {
+      "model_name": "Gradient Boosting",
+      "cv_accuracy_mean": 0.5676,
+      "cv_accuracy_std": 0.0118,
+      "cv_f1_macro_mean": 0.5555,
+      "test_accuracy": 0.57,
+      "test_precision_macro": 0.5744,
+      "test_recall_macro": 0.5483,
+      "test_f1_macro": 0.5576,
+      "test_f1_weighted": 0.5673,
+      "roc_auc_ovr": 0.7451,
+      "train_time_ms": 18128.25,
+      "inference_time_ms": 10.38
+    },
+    {
+      "model_name": "Random Forest",
+      "cv_accuracy_mean": 0.5517,
+      "cv_accuracy_std": 0.0127,
+      "cv_f1_macro_mean": 0.5287,
+      "test_accuracy": 0.5728,
+      "test_precision_macro": 0.5845,
+      "test_recall_macro": 0.5351,
+      "test_f1_macro": 0.5476,
+      "test_f1_weighted": 0.5643,
+      "roc_auc_ovr": 0.7377,
+      "train_time_ms": 3207.94,
+      "inference_time_ms": 31.87
+    },
+    {
+      "model_name": "Decision Tree",
+      "cv_accuracy_mean": 0.5146,
+      "cv_accuracy_std": 0.0059,
+      "cv_f1_macro_mean": 0.4986,
+      "test_accuracy": 0.5231,
+      "test_precision_macro": 0.5188,
+      "test_recall_macro": 0.5121,
+      "test_f1_macro": 0.5151,
+      "test_f1_weighted": 0.5225,
+      "roc_auc_ovr": 0.6882,
+      "train_time_ms": 101.2,
+      "inference_time_ms": 0.54
+    },
+    {
+      "model_name": "K-Nearest Neighbors",
+      "cv_accuracy_mean": 0.4899,
+      "cv_accuracy_std": 0.0099,
+      "cv_f1_macro_mean": 0.4724,
+      "test_accuracy": 0.5066,
+      "test_precision_macro": 0.4991,
+      "test_recall_macro": 0.4891,
+      "test_f1_macro": 0.4925,
+      "test_f1_weighted": 0.5041,
+      "roc_auc_ovr": 0.6696,
+      "train_time_ms": 352.85,
+      "inference_time_ms": 74.34
+    },
+    {
+      "model_name": "Logistic Regression",
+      "cv_accuracy_mean": 0.488,
+      "cv_accuracy_std": 0.0064,
+      "cv_f1_macro_mean": 0.3797,
+      "test_accuracy": 0.4893,
+      "test_precision_macro": 0.5026,
+      "test_recall_macro": 0.405,
+      "test_f1_macro": 0.3751,
+      "test_f1_weighted": 0.4265,
+      "roc_auc_ovr": 0.6482,
+      "train_time_ms": 203.34,
+      "inference_time_ms": 0.4
+    },
+    {
+      "model_name": "Naive Bayes",
+      "cv_accuracy_mean": 0.2796,
+      "cv_accuracy_std": 0.0057,
+      "cv_f1_macro_mean": 0.2019,
+      "test_accuracy": 0.2802,
+      "test_precision_macro": 0.2976,
+      "test_recall_macro": 0.3719,
+      "test_f1_macro": 0.204,
+      "test_f1_weighted": 0.1597,
+      "roc_auc_ovr": 0.614,
+      "train_time_ms": 31.51,
+      "inference_time_ms": 0.53
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "pipeline_version": "2.0-DWM",
+  "execution_timestamp": "2026-10-08T15:35:51.949264Z",
+  "metrics": {
+    "source_raw_apps_count": 7242,
+    "source_raw_reviews_count": 64295,
+    "rejected_records_count": 0,
+    "duplicate_records_resolved": 0,
+    "clean_analytical_apps_count": 7242,
+    "reviewed_apps_matched": 719,
+    "reconciliation_formula": "N_raw - N_rejected - N_dupes == N_clean",
+    "reconciliation_passed": true
+  },
+  "target_class_distribution": {
+    "class_0_low_under_10k": 2108,
+    "class_1_mid_10k_to_1m": 3347,
+    "class_2_high_above_1m": 1787
+  },
+  "rejection_log": []
+}

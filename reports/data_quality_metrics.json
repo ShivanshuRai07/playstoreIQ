@@ -1,0 +1,196 @@
+{
+  "profiling_timestamp": "2026-10-08T21:02:04.862273",
+  "apps_dataset": {
+    "file_name": "googleplaystore.csv",
+    "total_rows": 7242,
+    "total_columns": 14,
+    "columns": [
+      "App",
+      "Category",
+      "Rating",
+      "Reviews",
+      "Size",
+      "Installs",
+      "Type",
+      "Price",
+      "Content Rating",
+      "Genres",
+      "Last Updated",
+      "Current Ver",
+      "Android Ver",
+      "IsFree"
+    ],
+    "column_types": {
+      "App": "str",
+      "Category": "str",
+      "Rating": "float64",
+      "Reviews": "int64",
+      "Size": "float64",
+      "Installs": "int64",
+      "Type": "str",
+      "Price": "float64",
+      "Content Rating": "str",
+      "Genres": "str",
+      "Last Updated": "str",
+      "Current Ver": "str",
+      "Android Ver": "str",
+      "IsFree": "bool"
+    },
+    "null_counts": {
+      "App": 0,
+      "Category": 0,
+      "Rating": 1055,
+      "Reviews": 0,
+      "Size": 1098,
+      "Installs": 0,
+      "Type": 1,
+      "Price": 0,
+      "Content Rating": 0,
+      "Genres": 0,
+      "Last Updated": 0,
+      "Current Ver": 2,
+      "Android Ver": 2,
+      "IsFree": 0
+    },
+    "null_percentages": {
+      "App": 0.0,
+      "Category": 0.0,
+      "Rating": 14.57,
+      "Reviews": 0.0,
+      "Size": 15.16,
+      "Installs": 0.0,
+      "Type": 0.01,
+      "Price": 0.0,
+      "Content Rating": 0.0,
+      "Genres": 0.0,
+      "Last Updated": 0.0,
+      "Current Ver": 0.03,
+      "Android Ver": 0.03,
+      "IsFree": 0.0
+    },
+    "duplicate_rows_exact": 0,
+    "duplicate_app_names": 0,
+    "unique_apps": 7242,
+    "unique_categories": 33,
+    "categories_list": [
+      "ART_AND_DESIGN",
+      "AUTO_AND_VEHICLES",
+      "BEAUTY",
+      "BOOKS_AND_REFERENCE",
+      "BUSINESS",
+      "COMICS",
+      "COMMUNICATION",
+      "DATING",
+      "EDUCATION",
+      "ENTERTAINMENT",
+      "EVENTS",
+      "FAMILY",
+      "FINANCE",
+      "FOOD_AND_DRINK",
+      "GAME",
+      "HEALTH_AND_FITNESS",
+      "HOUSE_AND_HOME",
+      "LIBRARIES_AND_DEMO",
+      "LIFESTYLE",
+      "MAPS_AND_NAVIGATION",
+      "MEDICAL",
+      "NEWS_AND_MAGAZINES",
+      "PARENTING",
+      "PERSONALIZATION",
+      "PHOTOGRAPHY",
+      "PRODUCTIVITY",
+      "SHOPPING",
+      "SOCIAL",
+      "SPORTS",
+      "TOOLS",
+      "TRAVEL_AND_LOCAL",
+      "VIDEO_PLAYERS",
+      "WEATHER"
+    ],
+    "type_distribution": {
+      "Free": 6835,
+      "Paid": 406,
+      "nan": 1
+    },
+    "content_rating_distribution": {
+      "Everyone": 5858,
+      "Teen": 797,
+      "Mature 17+": 334,
+      "Everyone 10+": 250,
+      "Adults only 18+": 3
+    },
+    "installs_stats": {
+      "min": 0,
+      "max": 1000000000,
+      "mean": 9992344.2,
+      "median": 100000.0,
+      "skewness": 13.07,
+      "install_tiers": {
+        "tier_0_low_under_10k": 2108,
+        "tier_1_mid_10k_to_1m": 3347,
+        "tier_2_high_above_1m": 1787
+      }
+    },
+    "rating_stats": {
+      "valid_count": 6187,
+      "missing_count": 1055,
+      "min": 1.0,
+      "max": 5.0,
+      "mean": 4.21,
+      "median": 4.3,
+      "std": 0.52,
+      "skewness": -1.88,
+      "out_of_bounds_count (>5.0)": 0
+    },
+    "price_stats": {
+      "free_apps_count": 6836,
+      "paid_apps_count": 406,
+      "max_price": 400.0,
+      "mean_paid_price": 19.54,
+      "median_paid_price": 2.99
+    }
+  },
+  "reviews_dataset": {
+    "file_name": "googleplaystore_user_reviews.csv",
+    "total_rows": 64295,
+    "total_columns": 5,
+    "columns": [
+      "App",
+      "Translated_Review",
+      "Sentiment",
+      "Sentiment_Polarity",
+      "Sentiment_Subjectivity"
+    ],
+    "null_counts": {
+      "App": 0,
+      "Translated_Review": 26868,
+      "Sentiment": 26863,
+      "Sentiment_Polarity": 26863,
+      "Sentiment_Subjectivity": 26863
+    },
+    "null_percentages": {
+      "App": 0.0,
+      "Translated_Review": 41.79,
+      "Sentiment": 41.78,
+      "Sentiment_Polarity": 41.78,
+      "Sentiment_Subjectivity": 41.78
+    },
+    "unique_apps_in_reviews": 1074,
+    "apps_overlapping_with_apps_csv": 55355,
+    "sentiment_counts": {
+      "nan": 26863,
+      "Positive": 23998,
+      "Negative": 8271,
+      "Neutral": 5163
+    },
+    "polarity_stats": {
+      "valid_count": 37432,
+      "mean": 0.182,
+      "median": 0.15,
+      "std": 0.351,
+      "min": -1.0,
+      "max": 1.0,
+      "skewness": -0.105
+    }
+  }
+}
